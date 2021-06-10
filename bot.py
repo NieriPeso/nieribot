@@ -11,13 +11,6 @@ async def on_ready():
 
 
 @client.event
-async def on_reaction_add(reaction, user):
-    channel = reaction.message.channel
-    if channel.id == 850823068472836097:
-        print(f'Reaccion con {reaction.emoji}')
-
-
-@client.event
 async def on_raw_reaction_add(payload):
     if payload.message_id == 852333212373745674:
         guild_id = payload.guild_id
