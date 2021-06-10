@@ -1,55 +1,40 @@
 import discord
 from discord.ext import commands
+from decouple import config
 
-client = discord.Client()
+client = commands.Bot(command_prefix = '$')
 
-
+# INICIO DEL BOT PARA SU FUNCIONAMIENTO
 @client.event
 async def on_ready():
     print(f'Nieribot listo y operando con el user: {client.user}')
 
-# TESTEO EN ESCUCHAR LAS REACCIONES
-# FUNCIONA HASTA EL PUNTO QUE TOMA AL MIEMBRO PARA AGREGARLE ROL
-# SI VEN ESTE CÓDIGO Y SABEN QUE LE PASA ME ESCRIBEN POR DISCORD
-# MI USER EN DISCORD ES: '8ry4n'
 
-# @client.event
-# async def on_raw_reaction_add(payload):
-#     if payload.message_id == 852333212373745674:
-#         guild_id = payload.guild_id
-#         guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-#         print('Guild: ', guild.members)
+@client.event
+async def on_reaction_add(reaction, user):
+    channel = reaction.message.channel
+    if channel.id == 850823068472836097:
+        print(f'Reaccion con {reaction.emoji}')
 
-#         if payload.emoji.name == 'acepto':
-#             role = discord.utils.get(guild.roles, name='nieris')
-#             print(f'Role: {role}')
-#         else:
-#             role = None
-#             print('Other emoji added')
 
-#         if role is not None:
-#             member = client.get_user(payload.user_id)
-#             if member is not None:
-#                 await member.add_roles(role)
-#                 print('Rol agregado, nuevo nieri')
-#             else:
-#                 print('Member not found.')
-#         else:
-#             print('Role not found')
+@client.event
+async def on_raw_reaction_add(payload):
+    if payload.message_id == 852333212373745674:
+        guild_id = payload.guild_id
+        guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
 
-# @client.event
-# async def on_raw_reaction_remove(payload):
-#     if payload.message_id == 852333212373745674:
-#         print(payload.emoji.name)
+        if payload.emoji.name == 'acepto':
+            role = discord.utils.get(guild.roles, name='nieris')
+            #print(f'Role: {role}')
+        else:
+            role = None
+            #print('Otro emoji agregado')
 
-#         guild_id = payload.guild_id
-#         guild = discord.utils.find(lambda g : g.id == guild_id, client.guilds)
-#         role = discord.utils.find(lambda r : r.name == payload.emoji.name, guild.roles)
-
-#         if role is not None:
-#             member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
-#             await member.remove_roles(role)
-#             print("done")
+        if role is not None:
+            member = payload.member
+            if member is not None:
+                await payload.member.add_roles(role)
+                #print('Rol agregado, nuevo nieri')
 
 
 @client.event
@@ -57,14 +42,24 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+
     # CASA DE SUBASTAS, REGISTRO DE LA MISMA
     if message.content.startswith('$subasta'):
         msg = message.content
         print('\n\nSubasta:\n')
         print(msg.split("-"))
 
+
+    # BORRADO DE 50 MENSAJES EN UN CANAL (HAY QUE HACER EL FILTRO PARA LOS MODERADORES USAR SOLAMENTE)
     if message.content.startswith('$clear-chat'):
-        await message.channel.purge(limit=50)
+        listamsg = message.content.split(" ")
+        if len(listamsg) > 1:
+            await message.channel.purge(limit=int(listamsg[1]))
+            print('Borrado el chat con el parametro:',int(listamsg[1]))
+        else:
+            await message.channel.purge(limit=50)
+            print('Borrado el chat sin parametros')
+
 
     # ESCUCHAR EL COMANDO '$nieripeso' EN CUALQUIER CANAL PARA ENVIAR INSTRUCCIONES POR PRIV.
     if message.content.startswith('$nieripeso'):
@@ -111,7 +106,6 @@ Comparte este código en Discord para recibir Ñieri.
 IMPORTANTE: Para poder transferir Ñieri a otras personas debes pagar una pequeña cuota por la transacción, para eso debes tener un poco de BNB, la cryptomoneda de Binance. Aparece por defecto cuando nos conectamos a la red BSC Mainnet. Puedes pedir tus BNB en #quierobnb.
         ''')
 
-# EJECUCIÓN DEL BOT -SE SUPONE QUE ESE TOKEN ES SECRETO!-
-client.run('ODUxMTQyNDM3ODMyNjIyMTAx.YLz-Kg.fqhoHmm-G9JSeAbDJp_0-XuvL70')
 
-# https://discord.com/api/oauth2/authorize?client_id=851142437832622101&permissions=8&scope=bot
+# EJECUCIÓN DEL BOT -SE SUPONE QUE ESE TOKEN ES SECRETO!-
+client.run(config('TOKEN'))
