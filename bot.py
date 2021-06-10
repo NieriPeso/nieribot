@@ -57,6 +57,15 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    # CASA DE SUBASTAS, REGISTRO DE LA MISMA
+    if message.content.startswith('$subasta'):
+        msg = message.content
+        print('\n\nSubasta:\n')
+        print(msg.split("-"))
+
+    if message.content.startswith('$clear-chat'):
+        await message.channel.purge(limit=50)
+
     # ESCUCHAR EL COMANDO '$nieripeso' EN CUALQUIER CANAL PARA ENVIAR INSTRUCCIONES POR PRIV.
     if message.content.startswith('$nieripeso'):
         await message.author.send('''
@@ -103,6 +112,6 @@ IMPORTANTE: Para poder transferir Ñieri a otras personas debes pagar una peque�
         ''')
 
 # EJECUCIÓN DEL BOT -SE SUPONE QUE ESE TOKEN ES SECRETO!-
-client.run('ODUxMTQyNDM3ODMyNjIyMTAx.YLz-Kg.KKWvFx-skDJeCnNqWwSl2sQqm4E')
+client.run('ODUxMTQyNDM3ODMyNjIyMTAx.YLz-Kg.fqhoHmm-G9JSeAbDJp_0-XuvL70')
 
 # https://discord.com/api/oauth2/authorize?client_id=851142437832622101&permissions=8&scope=bot
