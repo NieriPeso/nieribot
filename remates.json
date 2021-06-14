@@ -1,0 +1,51 @@
+{
+  " mermelada3": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Mermelada kush",
+    "Descripcion del remate": "Re loque te dejaa",
+    "Base": 35000,
+    "Comienzo": "13/06/21 19:26",
+    "Activo": true,
+    "Termina": "07/08/2021 16:20",
+    "Postores": []
+  },
+  " manillar": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Manillar bmx",
+    "Descripcion del remate": "Sunday medida 9",
+    "Base": 1000,
+    "Comienzo": "13/06/21 19:26",
+    "Activo": true,
+    "Termina": "07/08/2021 16:20",
+    "Postores": []
+  },
+  " eldelas420": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Alto porro",
+    "Descripcion del remate": "",
+    "Base": 420,
+    "Comienzo": "13/06/21 23:36",
+    "Activo": true,
+    "Termina": "15/06/21 15:30",
+    "Postores": []
+  },
+  " gusetavo": {
+    "Rematador": "gusetavo",
+    "Nombre de remate": "Lamerme lada",
+    "Descripcion del remate": "Buena buena",
+    "Base": 420,
+    "Comienzo": "14/06/21 11:33",
+    "Activo": true,
+    "Termina": "15/06/21 15:30",
+    "Postores": [
+      [
+        "BryanOx",
+        500
+      ],
+      [
+        "BryanOx",
+        600
+      ]
+    ]
+  }
+}
