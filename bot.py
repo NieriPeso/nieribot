@@ -70,7 +70,7 @@ async def on_message(message):
     #============================== REMATE-VALORATE ==============================
     
     # COMANDO PARA PLANTARSE A UN REMATE
-    if message.content.startswith('$puja'):
+    if message.content.startswith('$puja') or message.content.startswith('$puja'):
         print('\nApostando en remate\n')
         apuesta = message.content
         datos = apuesta.split('*')
@@ -91,9 +91,7 @@ async def on_message(message):
         channel = client.get_channel(852910494876172309)
 
         await channel.send(f'''
-El usuario de nombre **{message.author.name}**
-Levanta la puja con **$Ñ {cantidad}**
-Al remate con id **{id_rem_apostar}** de **{temp[id_rem_apostar]['Rematador']}**
+**{message.author.name}** levanta la puja con **$Ñ {cantidad}** al remate con id **{id_rem_apostar}** de **{temp[id_rem_apostar]['Rematador']}**
 
 **HAGAN SUS APUESTASS CON EL SIGUIENTE COMANDO *(copy-paste recomendado)***
 \n

@@ -19,16 +19,6 @@
     "Termina": "07/08/2021 16:20",
     "Postores": []
   },
-  " eldelas420": {
-    "Rematador": "BryanOx",
-    "Nombre de remate": "Alto porro",
-    "Descripcion del remate": "",
-    "Base": 420,
-    "Comienzo": "13/06/21 23:36",
-    "Activo": true,
-    "Termina": "15/06/21 15:30",
-    "Postores": []
-  },
   " gusetavo": {
     "Rematador": "gusetavo",
     "Nombre de remate": "Lamerme lada",
@@ -45,6 +35,14 @@
       [
         "BryanOx",
         600
+      ],
+      [
+        "BryanOx",
+        0
+      ],
+      [
+        "BryanOx",
+        700
       ]
     ]
   }
