@@ -45,5 +45,38 @@
         700
       ]
     ]
+  },
+  " rideordie": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "BMX",
+    "Descripcion del remate": "BMX semi profesional, buenas piezas",
+    "Base": 30000,
+    "Comienzo": "15/06/21 15:57",
+    "Activo": true,
+    "Termina": "20/06/21 17:30",
+    "Postores": [
+      [
+        "BryanOx",
+        35000
+      ],
+      [
+        "BryanOx",
+        35000
+      ],
+      [
+        "el_manillar",
+        36000
+      ]
+    ]
+  },
+  " tu_id_anillar": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "algun_nombre",
+    "Descripcion del remate": "la_descripcion",
+    "Base": 500,
+    "Comienzo": "15/06/21 16:01",
+    "Activo": true,
+    "Termina": "27/06/21 17:30",
+    "Postores": []
   }
 }

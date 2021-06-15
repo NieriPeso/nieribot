@@ -6,9 +6,11 @@ from datetime import datetime
 
 # ESTRUCTURA DE COMANDOS Y ACCIONES DEL BOT
 
-client = commands.Bot(command_prefix = '/')
+client = commands.Bot(command_prefix='/')
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
+
+
 @client.event
 async def on_ready():
     print(f'Nieribot listo y operando con el user: {client.user}')
@@ -21,7 +23,7 @@ async def on_raw_reaction_add(payload):
         guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
 
         if payload.emoji.name == 'acepto':
-            role = discord.utils.get(guild.roles, name='nieris')
+            role = discord.utils.get(guild.roles, name='nieri')
             #print(f'Role: {role}')
         else:
             role = None
@@ -39,74 +41,94 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-
-
     # BORRADO DE 50 MENSAJES EN UN CANAL (HAY QUE HACER EL FILTRO PARA LOS MODERADORES USAR SOLAMENTE)
     if message.content.startswith('$clear-chat'):
-        listamsg = message.content.split(" ")
-        if len(listamsg) > 1:
-            await message.channel.purge(limit=int(listamsg[1]))
-            print('Borrado el chat con el parametro:',int(listamsg[1]))
+        if "ñod" in [y.name.lower() for y in message.author.roles] or "mod" in [y.name.lower() for y in message.author.roles]:
+            listamsg = message.content.split(" ")
+            if len(listamsg) > 1:
+                await message.channel.purge(limit=int(listamsg[1]))
+                print('Borrado el chat con el parametro:', int(listamsg[1]))
+            else:
+                await message.channel.purge(limit=50)
+                print('Borrado el chat sin parametros')
         else:
-            await message.channel.purge(limit=50)
-            print('Borrado el chat sin parametros')
-
+            print('sin permisos')
 
     if message.content.startswith('$nuevonieri'):
         sep = message.content.split(' ')
         if len(sep) > 1:
-            f = open('nuevosnieris.json','r')
-            temp = json.load(f)
-            f.close()
-            temp[message.user.id] = {
-                "Wallet": sep[1],
-                "Entregado":False
-            }
-            f = open('nuevosnieris.json','w')
-            json.dump(temp, f, indent=2)
-            f.close()
+            try:
+                f = open('nuevosnieris.json', 'r')
+                temp = json.load(f)
+                f.close()
+                temp[message.author.name]["Veces"] += 1
+                f = open('nuevosnieris.json', 'w')
+                json.dump(temp, f, indent=2)
+                f.close()
+                await message.channel.send(f'''
+**{message.author.name}** se ha registrado por {temp[message.author.name]["Veces"]} veces.
+***Le pedimos que deje de hacerlo y aguarde por sus $ÑERIS, gracias.***
+                ''')
+            
+            except:
+                f = open('nuevosnieris.json', 'r')
+                temp = json.load(f)
+                f.close()
+                temp[message.author.name] = {
+                    "Wallet": sep[1],
+                    "Entregado": False,
+                    "Veces": 1
+                }
+                f = open('nuevosnieris.json', 'w')
+                json.dump(temp, f, indent=2)
+                f.close()
+                await message.channel.send(f'''
+**{message.author.name}** se ha registrado correctamente.
+***Aguarde por sus $ÑERIS, son varios que estan en lista de espera, puede tardar pero gracias por su paciencia. Gracias.***
+                ''')
 
+    # ============================== REMATE-VALORATE ==============================
 
-    #============================== REMATE-VALORATE ==============================
-    
     # COMANDO PARA PLANTARSE A UN REMATE
-    if message.content.startswith('$puja') or message.content.startswith('$puja'):
+    if message.content.startswith('$puja') or message.content.startswith('$oferta'):
         print('\nApostando en remate\n')
         apuesta = message.content
         datos = apuesta.split('*')
 
-        id_rem_apostar = str(datos[1][2:]).replace('\n','')
-        cantidad = int(datos[2][9:].replace('\n',''))
+        id_rem_apostar = str(datos[1][2:]).replace('\n', '')
+        cantidad = int(datos[2][9:].replace('\n', ''))
         apuesta = [message.author.name, cantidad]
-        
+
         file = open('remates.json', 'r')
         temp = json.load(file)
         file.close()
-        
+
         postores = temp[id_rem_apostar]['Postores']
         postores.append(apuesta)
-        
+
         temp[id_rem_apostar]['Postores'] = postores
 
         channel = client.get_channel(852910494876172309)
 
-        await channel.send(f'''
-**{message.author.name}** levanta la puja con **$Ñ {cantidad}** al remate con id **{id_rem_apostar}** de **{temp[id_rem_apostar]['Rematador']}**
+        embed = discord.Embed(
+            title=f'**Nueva puja al remate con id {id_rem_apostar}**',
+            description=f'Este remate fue abierto por **{temp[id_rem_apostar]["Rematador"]}**',
+            colou=discord.Color.green()
+        )
+        embed.set_author(name=f'{message.author.name}',
+        icon_url=f'{str(message.author.avatar_url)[:-4]}128')
+        embed.add_field(name='Cantidad:', value=f'{cantidad}', inline=False)
 
-**HAGAN SUS APUESTASS CON EL SIGUIENTE COMANDO *(copy-paste recomendado)***
-\n
-        ''')
-        await channel.send(f'''
-$puja
-*id su_id
-*cantidad numero_base_$Ñ
-        ''')
+        await channel.send(embed=embed)
+#         await channel.send(f'''
+# $puja
+# *id su_id
+# *cantidad numero_base_$Ñ
+#         ''')
 
         file = open('remates.json', 'w')
         json.dump(temp, file, indent=2)
         file.close()
-
-
 
     # COMANDO PARA EL REGISTRO DE LOS REMATES
     if message.content.startswith('$crear-remate'):
@@ -120,6 +142,10 @@ $puja
         remate_descripcion = str(datos[3][12:])
         base = datos[4][5:]
         final = str(datos[5][6:])
+        try:
+            img = message.attachments[0].url
+        except:
+            img = None
 
         # CONVERTIR PRECIO A NUMERO ENTERO
         try:
@@ -127,43 +153,54 @@ $puja
         except ValueError:
             print('Precio inicial no es un int. ValueError')
 
-
         # ESCRIBIR A ARCHIVO CON REMATES
         file = open('remates.json', 'r')
         temp = json.load(file)
         file.close()
-        temp[id_remate.replace('\n','')] = {
+        temp[id_remate.replace('\n', '')] = {
             'Rematador': rematador,
-            'Nombre de remate': remate_nombre.replace('\n',''),
-            'Descripcion del remate': remate_descripcion.replace('\n',''),
+            'Nombre de remate': remate_nombre.replace('\n', ''),
+            'Descripcion del remate': remate_descripcion.replace('\n', ''),
             'Base': base,
-            'Comienzo':datetime.now().strftime('%d/%m/%y %H:%M'),
-            'Activo':True,
-            'Termina': final.replace('\n',''),
-            'Postores':[]
+            'Comienzo': datetime.now().strftime('%d/%m/%y %H:%M'),
+            'Activo': True,
+            'Termina': final.replace('\n', ''),
+            'Postores': []
         }
         file = open('remates.json', 'w')
         json.dump(temp, file, indent=2)
         file.close()
 
-
         channel = client.get_channel(852910494876172309)
 
-        await channel.send(f'''
-ID del remate: ***{id_remate}***
-Rematador: **{rematador}**\n
-Nombre del remate: {remate_nombre}
-Descripción del remate: {remate_descripcion}
-Precio base: **{base}**\n
-Fecha límite: **{final}**
+        embed = discord.Embed(
+            title=f'Nuevo remate con id {id_remate}',
+            description=f'{remate_descripcion}',
+            colou=discord.Color.green()
+        )
+        embed.add_field(name='Rematador:', value=f'{rematador}', inline=False)
+        embed.add_field(name='Nombre del remate:', value=f'{remate_nombre}', inline=False)
+        embed.add_field(name='Precio base:', value=f'{base}', inline=False)
+        embed.add_field(name='Fecha de finalización:', value=f'{final}', inline=False)
+        if not img == None:
+            embed.set_image(url=img)
+        else:
+            embed.add_field(name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
+        embed.set_footer(text='**HAGAN SUS APUESTASS**')
 
-**HAGAN SUS APUESTASS**
-\n
-        ''')
+        await channel.send(embed=embed)
 
-        #===========================================================================
+#         await channel.send(f'''
+# ID del remate: ***{id_remate}***
+# Rematador: **{rematador}**\n
+# Nombre del remate: {remate_nombre}
+# Descripción del remate: {remate_descripcion}
+# Precio base: **{base}**\n
+# Fecha límite: **{final}**
 
+#         ''')
 
+        # ===========================================================================
 
     # ESCUCHAR EL COMANDO '$nieripeso' EN CUALQUIER CANAL PARA ENVIAR INSTRUCCIONES POR PRIV.
     if message.content.startswith('$nieripeso'):
