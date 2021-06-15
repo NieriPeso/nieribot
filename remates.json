@@ -78,5 +78,25 @@
     "Activo": true,
     "Termina": "27/06/21 17:30",
     "Postores": []
+  },
+  " test123": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Probando",
+    "Descripcion del remate": "Cosas de prueba nadamass",
+    "Base": 0,
+    "Comienzo": "15/06/21 20:08",
+    "Activo": true,
+    "Termina": "27/06/21 17:30",
+    "Postores": []
+  },
+  " probando123": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Pruebass",
+    "Descripcion del remate": "Probando el color del embed de remate",
+    "Base": 0,
+    "Comienzo": "15/06/21 20:20",
+    "Activo": true,
+    "Termina": "07/08/2025 00:00",
+    "Postores": []
   }
 }
