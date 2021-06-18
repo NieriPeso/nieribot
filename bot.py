@@ -56,7 +56,7 @@ async def on_message(message):
     if message.content.lower().startswith(puja) or message.content.startswith(oferta):
         embed, error = remates.pujar_remate(message=message)
         if not error:
-            channel = client.get_channel(854807245509492808)
+            channel = client.get_channel(855566924711985192)
             await channel.send(embed=embed)
         else:
             await message.channel.send(embed=embed)
@@ -65,7 +65,7 @@ async def on_message(message):
     if message.content.lower().startswith(crear_remate):
         embed, error = remates.crear_remate(message=message)
         if not error:
-            channel = client.get_channel(854807245509492808)
+            channel = client.get_channel(855566924711985192)
             await channel.send(embed=embed)
         else:
             await message.channel.send(embed=embed)
