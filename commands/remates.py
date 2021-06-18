@@ -1,4 +1,5 @@
-import discord, json
+import discord, json, pymongo
+from . import db
 from datetime import datetime
 
 def crear_remate(message):
@@ -31,11 +32,9 @@ def crear_remate(message):
         except ValueError:
             base = 0
 
-        # ESCRIBIR A ARCHIVO CON REMATES
-        file = open('remates.json', 'r')
-        temp = json.load(file)
-        file.close()
-        temp[id_remate.replace('\n', '')] = {
+        # PERSISTENCIA EN MONGO DB
+        save = {
+            '_id': id_remate,
             'Rematador': rematador,
             'Nombre de remate': remate_nombre.replace('\n', ''),
             'Descripcion del remate': remate_descripcion.replace('\n', ''),
@@ -45,9 +44,26 @@ def crear_remate(message):
             'Termina': final.replace('\n', ''),
             'Postores': []
         }
-        file = open('remates.json', 'w')
-        json.dump(temp, file, indent=2)
-        file.close()
+
+        db.agregar_remate()
+
+        # ESCRIBIR A ARCHIVO CON REMATES
+        # file = open('remates.json', 'r')
+        # temp = json.load(file)
+        # file.close()
+        # temp[id_remate.replace('\n', '')] = {
+        #     'Rematador': rematador,
+        #     'Nombre de remate': remate_nombre.replace('\n', ''),
+        #     'Descripcion del remate': remate_descripcion.replace('\n', ''),
+        #     'Base': base,
+        #     'Comienzo': datetime.now().strftime('%d/%m/%y %H:%M'),
+        #     'Activo': True,
+        #     'Termina': final.replace('\n', ''),
+        #     'Postores': []
+        # }
+        # file = open('remates.json', 'w')
+        # json.dump(temp, file, indent=2)
+        # file.close()
 
         embed = discord.Embed(
             title=f'Nuevo remate con id {id_remate}',
