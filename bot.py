@@ -1,9 +1,6 @@
-from commands.chat import limpiar
 import discord
 from discord.ext import commands
 from decouple import config
-import json
-from datetime import datetime
 from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
