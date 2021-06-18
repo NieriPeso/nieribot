@@ -54,22 +54,25 @@ async def on_message(message):
 
     # COMANDO PARA PLANTARSE A UN REMATE
     if message.content.lower().startswith(puja) or message.content.startswith(oferta):
-        embed, error = remates.pujar_remate(message=message)
-        if not error:
-            channel = client.get_channel(855566924711985192)
-            await channel.send(embed=embed)
-        else:
-            await message.channel.send(embed=embed)
+        filter_channel = client.get_channel(849410645513207828)
+        if message.channel.id == filter_channel:
+            embed, error = remates.pujar_remate(message=message)
+            if not error:
+                channel = client.get_channel(855566924711985192)
+                await channel.send(embed=embed)
+            else:
+                await message.channel.send(embed=embed)
 
     # COMANDO PARA EL REGISTRO DE LOS REMATES
     if message.content.lower().startswith(crear_remate):
-        embed, error = remates.crear_remate(message=message)
-        if not error:
-            channel = client.get_channel(855566924711985192)
-            await channel.send(embed=embed)
-        else:
-            await message.channel.send(embed=embed)
-        
+        filter_channel = client.get_channel(849410645513207828)
+        if message.channel.id == filter_channel:
+            embed, error = remates.crear_remate(message=message)
+            if not error:
+                channel = client.get_channel(855566924711985192)
+                await channel.send(embed=embed)
+            else:
+                await message.channel.send(embed=embed)
 
         # ===========================================================================
 
