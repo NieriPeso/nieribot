@@ -5,5 +5,7 @@ chardet==4.0.0
 discord.py==1.7.2
 idna==3.2
 multidict==5.1.0
+psycopg2-binary==2.8.6
+python-decouple==3.4
 typing-extensions==3.10.0.0
 yarl==1.6.3
