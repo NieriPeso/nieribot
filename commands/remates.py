@@ -1,4 +1,4 @@
-import discord, json, pymongo
+import discord
 from . import db
 from datetime import datetime
 
@@ -7,7 +7,7 @@ def crear_remate(message):
         remate = message.content.lower()
         datos = remate.split('*')
 
-        id_remate = str(datos[1][3:])
+        id_remate = str(datos[1][3:]).strip()
         rematador = str(message.author.name)
         remate_nombre = str(datos[2][7:])
         remate_descripcion = str(datos[3][12:])
@@ -34,7 +34,7 @@ def crear_remate(message):
 
         # PERSISTENCIA EN MONGO DB
         save = {
-            '_id': id_remate,
+            'ID': id_remate,
             'Rematador': rematador,
             'Nombre de remate': remate_nombre.replace('\n', ''),
             'Descripcion del remate': remate_descripcion.replace('\n', ''),
@@ -45,45 +45,35 @@ def crear_remate(message):
             'Postores': []
         }
 
-        db.agregar_remate(save)
+        saved = db.agregar_remate(save, id_remate)
 
-        # ESCRIBIR A ARCHIVO CON REMATES
-        # file = open('remates.json', 'r')
-        # temp = json.load(file)
-        # file.close()
-        # temp[id_remate.replace('\n', '')] = {
-        #     'Rematador': rematador,
-        #     'Nombre de remate': remate_nombre.replace('\n', ''),
-        #     'Descripcion del remate': remate_descripcion.replace('\n', ''),
-        #     'Base': base,
-        #     'Comienzo': datetime.now().strftime('%d/%m/%y %H:%M'),
-        #     'Activo': True,
-        #     'Termina': final.replace('\n', ''),
-        #     'Postores': []
-        # }
-        # file = open('remates.json', 'w')
-        # json.dump(temp, file, indent=2)
-        # file.close()
+        if saved:
+            embed = discord.Embed(
+                title=f'Nuevo remate con id {id_remate}',
+                description=f'{remate_descripcion}',
+                colour=discord.Color.green()
+            )
+            embed.add_field(name='Rematador:', value=f'{rematador}', inline=False)
+            embed.add_field(name='Nombre del remate:',
+                            value=f'{remate_nombre}', inline=False)
+            embed.add_field(name='Precio base:', value=f'{base}', inline=False)
+            embed.add_field(name='Fecha de finalización:',
+                            value=f'{final}', inline=False)
+            if not img == None:
+                embed.set_image(url=img)
+            else:
+                embed.add_field(
+                    name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
+            embed.set_footer(text='SUERTE A TODOS')
 
-        embed = discord.Embed(
-            title=f'Nuevo remate con id {id_remate}',
-            description=f'{remate_descripcion}',
-            colour=discord.Color.green()
-        )
-        embed.add_field(name='Rematador:', value=f'{rematador}', inline=False)
-        embed.add_field(name='Nombre del remate:',
-                        value=f'{remate_nombre}', inline=False)
-        embed.add_field(name='Precio base:', value=f'{base}', inline=False)
-        embed.add_field(name='Fecha de finalización:',
-                        value=f'{final}', inline=False)
-        if not img == None:
-            embed.set_image(url=img)
+            return embed, False
         else:
-            embed.add_field(
-                name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-        embed.set_footer(text='SUERTE A TODOS')
-
-        return embed, False
+            embed = discord.Embed(
+            title='ERROR CREANDO REMATE',
+            description=f'Lo siento {message.author.name} parece que ese id de remate ya esta en uso.',
+            colour=discord.Color.red()
+            )
+            return embed, True
     except:
         embed = discord.Embed(
             title='ERROR CREANDO REMATE',
@@ -97,27 +87,21 @@ def pujar_remate(message):
         apuesta = message.content.lower()
         datos = apuesta.split('*')
 
-        id_rem_apostar = str(datos[1][3:]).replace('\n', '')
+        id_rem_apostar = str(datos[1][3:]).replace('\n', '').strip()
         cantidad = int(datos[2][2:].replace('\n', ''))
         apuesta = [message.author.name, cantidad]
 
-        file = open('remates.json', 'r')
-        temp = json.load(file)
-        file.close()
+        temp = db.obtener_datos(id=id_rem_apostar)
+        postores = temp['Postores']
 
-        postores = temp[id_rem_apostar]['Postores']
-        if postores == [] and cantidad > temp[id_rem_apostar]['Base'] or postores[-1][1] < cantidad:
+        if postores == [] and cantidad > temp['Base'] or postores[-1][1] < cantidad:
             postores.append(apuesta)
 
-            temp[id_rem_apostar]['Postores'] = postores
-
-            file = open('remates.json', 'w')
-            json.dump(temp, file, indent=2)
-            file.close()
+            db.guardar_puja(id=id_rem_apostar, pujas=postores)
 
             embed = discord.Embed(
                 title=f'**Nueva puja al remate con id {id_rem_apostar}**',
-                description=f'Este remate fue abierto por **{temp[id_rem_apostar]["Rematador"]}**',
+                description=f'Este remate fue abierto por **{temp["Rematador"]}**',
                 colour=discord.Color.green()
             )
             embed.set_author(name=f'{message.author.name}',

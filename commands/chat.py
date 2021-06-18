@@ -7,7 +7,6 @@ async def limpiar_chat(message):
             await message.channel.purge(limit=int(listamsg[1]))
         else:
             await message.channel.purge(limit=50)
-        return None
     else:
         embed = discord.Embed(
             title='ERROR DE PERMISOS',
