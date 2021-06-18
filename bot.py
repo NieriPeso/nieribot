@@ -1,3 +1,4 @@
+from logging import error
 import discord
 from discord.ext import commands
 from decouple import config
@@ -43,34 +44,38 @@ async def on_message(message):
         return
 
     # BORRADO DE 50 MENSAJES EN UN CANAL (HAY QUE HACER EL FILTRO PARA LOS MODERADORES USAR SOLAMENTE)
-    if message.content.startswith(clear_chat):
-        embed = chat.limpiar_chat(message=message)
-        if embed != None:
-            message.channel.send(embed=embed)
+    if message.content.lower().startswith(clear_chat):
+        await chat.limpiar_chat(message=message)
 
-    if message.content.startswith(nuevo_nieri):
+    if message.content.lower().startswith(nuevo_nieri):
         embed = nuevonieri.registro(message=message, name=message.author.name)
         await message.channel.send(embed=embed)
 
     # ============================== REMATE-VALORATE ==============================
 
     # COMANDO PARA PLANTARSE A UN REMATE
-    if message.content.startswith(puja) or message.content.startswith(oferta):
-        embed = remates.pujar_remate(message=message)
-        channel = client.get_channel(852910494876172309)
-        await channel.send(embed=embed)
+    if message.content.lower().startswith(puja) or message.content.startswith(oferta):
+        embed, error = remates.pujar_remate(message=message)
+        if not error:
+            channel = client.get_channel(854807245509492808)
+            await channel.send(embed=embed)
+        else:
+            await message.channel.send(embed=embed)
 
     # COMANDO PARA EL REGISTRO DE LOS REMATES
-    if message.content.startswith(crear_remate):
-        embed = remates.crear_remate(message=message)
-        channel = client.get_channel(852910494876172309)
-        await channel.send(embed=embed)
+    if message.content.lower().startswith(crear_remate):
+        embed, error = remates.crear_remate(message=message)
+        if not error:
+            channel = client.get_channel(854807245509492808)
+            await channel.send(embed=embed)
+        else:
+            await message.channel.send(embed=embed)
         
 
         # ===========================================================================
 
     # ESCUCHAR EL COMANDO '$nieripeso' EN CUALQUIER CANAL PARA ENVIAR INSTRUCCIONES POR PRIV.
-    if message.content.startswith(nieripeso):
+    if message.content.lower().startswith(nieripeso):
         for msg in instrucciones:
             await message.author.send(msg)
 

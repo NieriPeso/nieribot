@@ -3,15 +3,23 @@ from datetime import datetime
 
 def crear_remate(message):
     try:
-        remate = message.content
+        remate = message.content.lower()
         datos = remate.split('*')
 
-        id_remate = str(datos[1][2:])
+        id_remate = str(datos[1][3:])
         rematador = str(message.author.name)
         remate_nombre = str(datos[2][7:])
         remate_descripcion = str(datos[3][12:])
         base = datos[4][5:]
-        final = str(datos[5][6:])
+        if len(datos[5]) > 6:
+            final = str(datos[5][6:])
+        else:
+            embed = discord.Embed(
+                title='ERROR',
+                description='Es obligatorio escribir la fecha',
+                colour=discord.Color.red()
+            )
+            return embed, True
         try:
             img = message.attachments[0].url
         except:
@@ -59,22 +67,22 @@ def crear_remate(message):
                 name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
         embed.set_footer(text='SUERTE A TODOS')
 
-        return embed
+        return embed, False
     except:
         embed = discord.Embed(
             title='ERROR CREANDO REMATE',
             description=f'Lo siento {message.author.name} pero tu remate no pudo registrarse, algo esta mal.\nComprueba como escribiste el comando y corrígelo o pidele ayuda a un mod.',
             colour=discord.Color.red()
         )
-        return embed
+        return embed, True
 
 def pujar_remate(message):
     try:
-        apuesta = message.content
+        apuesta = message.content.lower()
         datos = apuesta.split('*')
 
-        id_rem_apostar = str(datos[1][2:]).replace('\n', '')
-        cantidad = int(datos[2][9:].replace('\n', ''))
+        id_rem_apostar = str(datos[1][3:]).replace('\n', '')
+        cantidad = int(datos[2][2:].replace('\n', ''))
         apuesta = [message.author.name, cantidad]
 
         file = open('remates.json', 'r')
@@ -82,30 +90,37 @@ def pujar_remate(message):
         file.close()
 
         postores = temp[id_rem_apostar]['Postores']
-        postores.append(apuesta)
+        if postores == [] and cantidad > temp[id_rem_apostar]['Base'] or postores[-1][1] < cantidad:
+            postores.append(apuesta)
 
-        temp[id_rem_apostar]['Postores'] = postores
+            temp[id_rem_apostar]['Postores'] = postores
 
-        file = open('remates.json', 'w')
-        json.dump(temp, file, indent=2)
-        file.close()
+            file = open('remates.json', 'w')
+            json.dump(temp, file, indent=2)
+            file.close()
 
-        embed = discord.Embed(
-            title=f'**Nueva puja al remate con id {id_rem_apostar}**',
-            description=f'Este remate fue abierto por **{temp[id_rem_apostar]["Rematador"]}**',
-            colour=discord.Color.green()
+            embed = discord.Embed(
+                title=f'**Nueva puja al remate con id {id_rem_apostar}**',
+                description=f'Este remate fue abierto por **{temp[id_rem_apostar]["Rematador"]}**',
+                colour=discord.Color.green()
+            )
+            embed.set_author(name=f'{message.author.name}',
+                            icon_url=f'{str(message.author.avatar_url)[:-4]}128')
+            embed.add_field(name='Cantidad:', value=f'{cantidad}', inline=False)
+
+            return embed, False
+        else:
+            embed = discord.Embed(
+            title='ERROR',
+            description=f'{message.author.name}, tu puja no es mayor a la ultima puja o a la base.',
+            colour=discord.Color.red()
         )
-        embed.set_author(name=f'{message.author.name}',
-                         icon_url=f'{str(message.author.avatar_url)[:-4]}128')
-        embed.add_field(name='Cantidad:', value=f'{cantidad}', inline=False)
-
-        return embed
+        return embed, True
     except:
         embed = discord.Embed(
             title='ERROR',
             description=f'{message.author.name} no se pudo realizar la puja',
             colour=discord.Color.red()
         )
-        embed.add_field(
-            name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
-        return embed
+        embed.add_field(name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
+        return embed, True
