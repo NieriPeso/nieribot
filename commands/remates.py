@@ -45,7 +45,7 @@ def crear_remate(message):
             'Postores': []
         }
 
-        db.agregar_remate()
+        db.agregar_remate(save)
 
         # ESCRIBIR A ARCHIVO CON REMATES
         # file = open('remates.json', 'r')
