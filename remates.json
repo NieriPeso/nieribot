@@ -1,2 +1,12 @@
 {
+  " algunacosa": {
+    "Rematador": "BryanOx",
+    "Nombre de remate": "Sin nombre",
+    "Descripcion del remate": "Por ahora ninguna \u00f1e",
+    "Base": 10,
+    "Comienzo": "17/06/21 22:09",
+    "Activo": true,
+    "Termina": "20/08/2021 17:00",
+    "Postores": []
+  }
 }
