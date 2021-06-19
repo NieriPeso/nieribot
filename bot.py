@@ -56,10 +56,11 @@ async def on_message(message):
     # COMANDO PARA PLANTARSE A UN REMATE
     if message.content.lower().startswith(puja) or message.content.startswith(oferta):
         if message.channel.id == 854807192997330944:
-            embed, error = remates.pujar_remate(message=message)
+            embed, error, confirm = remates.pujar_remate(message=message)
             if not error:
                 channel = client.get_channel(854807245509492808)
                 await channel.send(embed=embed)
+                await message.channel.send(embed=confirm)
             else:
                 await message.channel.send(embed=embed)
 

@@ -117,7 +117,13 @@ def pujar_remate(message):
             embed.add_field(name='Cantidad:',
                             value=f'{cantidad}', inline=False)
 
-            return embed, False
+            confirmation = discord.Embed(
+                title=f'**{message.author.name} realizó una puja con éxito.**',
+                description=f'Este remate fue abierto por **{temp["Rematador"]}**',
+                colour=discord.Color.green()
+            )
+            
+            return embed, False, confirmation
         else:
             embed = discord.Embed(
                 title='ERROR',
