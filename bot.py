@@ -39,6 +39,7 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_message(message):
+
     if message.author == client.user:
         return
 
@@ -54,22 +55,20 @@ async def on_message(message):
 
     # COMANDO PARA PLANTARSE A UN REMATE
     if message.content.lower().startswith(puja) or message.content.startswith(oferta):
-        filter_channel = client.get_channel(849410645513207828)
-        if message.channel.id == filter_channel:
+        if message.channel.id == 854807192997330944:
             embed, error = remates.pujar_remate(message=message)
             if not error:
-                channel = client.get_channel(855566924711985192)
+                channel = client.get_channel(854807245509492808)
                 await channel.send(embed=embed)
             else:
                 await message.channel.send(embed=embed)
 
     # COMANDO PARA EL REGISTRO DE LOS REMATES
     if message.content.lower().startswith(crear_remate):
-        filter_channel = client.get_channel(849410645513207828)
-        if message.channel.id == filter_channel:
+        if message.channel.id == 854807192997330944:
             embed, error = remates.crear_remate(message=message)
             if not error:
-                channel = client.get_channel(855566924711985192)
+                channel = client.get_channel(854807245509492808)
                 await channel.send(embed=embed)
             else:
                 await message.channel.send(embed=embed)

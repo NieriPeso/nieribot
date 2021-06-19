@@ -4,5 +4,3 @@ clear_chat = '$clear-chat'
 puja = '$puja'
 oferta = '$oferta'
 nieripeso = '$nieripeso'
-
-NUEVONIERI = False
