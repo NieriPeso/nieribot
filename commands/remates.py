@@ -12,15 +12,18 @@ def crear_remate(message):
         remate_nombre = str(datos[1][7:])
         remate_descripcion = str(datos[2][12:])
         base = datos[3][5:]
+
         if len(datos[4]) > 6:
             final = str(datos[4][6:])
+
         else:
             embed = discord.Embed(
                 title='ERROR',
-                description='Es obligatorio escribir la fecha',
+                description='Es obligatorio escribir la fecha y hora de finalización',
                 colour=discord.Color.red()
             )
             return embed, True
+
         try:
             img = message.attachments[0].url
         except:
@@ -42,7 +45,8 @@ def crear_remate(message):
             'Comienzo': datetime.now().strftime('%d/%m/%y %H:%M'),
             'Activo': True,
             'Termina': final.replace('\n', ''),
-            'Postores': []
+            'Postores': [],
+            'Foto':img
         }
 
         db.agregar_remate(save)
@@ -62,7 +66,7 @@ def crear_remate(message):
             embed.add_field(
                 name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
             embed.set_footer(text='SUERTE A TODOS')
-            return embed, False
+        return embed, False
 
     except:
         embed = discord.Embed(
@@ -87,7 +91,7 @@ def pujar_remate(message):
                 description=f'{message.author.name}, el id debe ser un número entero, nada de letras o decimales.',
                 colour=discord.Color.orange()
             )
-            return embed, True
+            return embed, True, None
         
         cantidad = int(datos[2][2:].replace('\n', ''))
         puja = [message.author.name, cantidad]
@@ -101,36 +105,48 @@ def pujar_remate(message):
                 description=f'{message.author.name}, no puedes pujar en tu propio remate.',
                 colour=discord.Color.orange()
             )
-            return embed, True
+            return embed, True, None
 
         if postores == [] and cantidad >= temp['Base'] or postores[-1][1] < cantidad:
 
-            db.guardar_puja(id=id_rem_apostar, puja=puja)
+            saved = db.guardar_puja(id=id_rem_apostar, puja=puja)
 
-            embed = discord.Embed(
-                title=f'**Nueva puja al remate con id {id_rem_apostar}**',
-                description=f'Este remate fue abierto por **{temp["Rematador"]}**',
-                colour=discord.Color.green()
-            )
-            embed.set_author(name=f'{message.author.name}',
-                             icon_url=f'{str(message.author.avatar_url)[:-4]}128')
-            embed.add_field(name='Cantidad:',
-                            value=f'{cantidad}', inline=False)
+            if saved:
+                embed = discord.Embed(
+                    title=f'**Nueva puja al remate con id {id_rem_apostar}**',
+                    description=f'Este remate fue abierto por **{temp["Rematador"]}**',
+                    colour=discord.Color.green()
+                )
+                embed.set_author(name=f'{message.author.name}',
+                                icon_url=f'{str(message.author.avatar_url)[:-4]}128')
+                embed.add_field(name='Cantidad:',
+                                value=f'{cantidad}', inline=False)
 
-            confirmation = discord.Embed(
-                title=f'**{message.author.name} realizó una puja con éxito.**',
-                description=f'Este remate fue abierto por **{temp["Rematador"]}**',
-                colour=discord.Color.green()
-            )
-            
-            return embed, False, confirmation
+                confirmation = discord.Embed(
+                    title=f'**{message.author.name} realizó una puja con éxito.**',
+                    description=f'Este remate fue abierto por **{temp["Rematador"]}**',
+                    colour=discord.Color.green()
+                )
+                
+                return embed, False, confirmation
+
+            else:
+                embed = discord.Embed(
+                    title='ERROR',
+                    description=f'{message.author.name}, esta puja ya ha terminado.',
+                    colour=discord.Color.red()
+                )
+                embed.add_field(name='GANADOR/A:', value=f'{postores[-1][0]}', inline=False)
+                embed.add_field(name='Cantidad pujada:', value=f'{postores[-1][1]}', inline=False)
+                return embed, True, None
+
         else:
             embed = discord.Embed(
                 title='ERROR',
                 description=f'{message.author.name}, tu puja no es mayor a la ultima puja o a la base.',
                 colour=discord.Color.red()
             )
-            return embed, True
+            return embed, True, None
     except:
         embed = discord.Embed(
             title='ERROR',
@@ -139,4 +155,4 @@ def pujar_remate(message):
         )
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
-        return embed, True
+        return embed, True, None

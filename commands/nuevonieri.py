@@ -3,7 +3,6 @@ from . import db
 
 enable = False
 
-
 def registro(message,  name):
     if enable:
         sep = message.content.split(' ')

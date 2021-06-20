@@ -5,17 +5,11 @@ from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
 
-# ESTRUCTURA DE COMANDOS Y ACCIONES DEL BOT
-
-client = commands.Bot(command_prefix='/')
-
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
-
-
+client = commands.Bot(command_prefix='/')
 @client.event
 async def on_ready():
     print(f'Nieribot listo y operando con el user: {client.user}')
-
 
 @client.event
 async def on_raw_reaction_add(payload):
@@ -36,7 +30,6 @@ async def on_raw_reaction_add(payload):
                 await payload.member.add_roles(role)
                 #print('Rol agregado, nuevo nieri')
 
-
 @client.event
 async def on_message(message):
 
@@ -52,7 +45,6 @@ async def on_message(message):
         await message.channel.send(embed=embed)
 
     # ============================== REMATE-VALORATE ==============================
-
     # COMANDO PARA PLANTARSE A UN REMATE
     if message.content.lower().startswith(puja) or message.content.startswith(oferta):
         if message.channel.id == 854807192997330944:
@@ -63,7 +55,6 @@ async def on_message(message):
                 await message.channel.send(embed=confirm)
             else:
                 await message.channel.send(embed=embed)
-
     # COMANDO PARA EL REGISTRO DE LOS REMATES
     if message.content.lower().startswith(crear_remate):
         if message.channel.id == 854807192997330944:
