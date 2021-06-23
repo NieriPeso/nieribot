@@ -128,11 +128,10 @@ def pujar_remate(message):
 
             if saved:
                 embed = discord.Embed(
-                    title=f'**{message.author.name} realizó una puja con éxito.**',
+                    title=f'**{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.**',
                     description=f'Este remate fue abierto por **{temp["Rematador"]}**',
                     colour=discord.Color.green()
-                )
-                
+                )                
                 return embed, False
 
             else:

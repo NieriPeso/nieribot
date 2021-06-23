@@ -63,6 +63,9 @@ def guardar_puja(id, puja):
     else:
         return False
 
+def guardar_id_mensaje(id):
+    pass
+
 # ========================================================================
 
 

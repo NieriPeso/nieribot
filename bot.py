@@ -4,6 +4,7 @@ from decouple import config
 from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
+from commands.db import guardar_id_mensaje
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$')
@@ -35,7 +36,11 @@ async def on_raw_reaction_add(payload):
 async def on_message(message):
     await bot.process_commands(message)
     if message.author == bot.user:
-        return
+        if message.channel.id == 854807245509492808:
+            guardar_id_mensaje(id=message.id)
+            print(message.id)
+        else:
+            return
 
     # (HAY QUE HACER EL FILTRO PARA LOS MODERADORES USAR SOLAMENTE)
     # if message.content.lower().startswith(clear_chat):
@@ -47,13 +52,13 @@ async def on_message(message):
 
     # ============================== REMATE-VALORATE ==============================
     # COMANDO PARA PLANTARSE A UN REMATE
-    if message.content.lower().startswith(puja) or message.content.startswith(oferta):
-        if message.channel.id == 854807192997330944:
-            embed, error = remates.pujar_remate(message=message)
-            if not error:
-                await message.channel.send(embed=embed)
-            else:
-                await message.channel.send(embed=embed)
+    # if message.content.lower().startswith(puja) or message.content.startswith(oferta):
+    #     if message.channel.id == 854807192997330944:
+    #         embed, error = remates.pujar_remate(message=message)
+    #         if not error:
+    #             await message.channel.send(embed=embed)
+    #         else:
+    #             await message.channel.send(embed=embed)
 
     # COMANDO PARA EL REGISTRO DE LOS REMATES
     # if message.content.lower().startswith(crear_remate):
@@ -85,7 +90,15 @@ async def limpieza(ctx, arg=None):
 
 @bot.command(name='puja')
 async def pujar(ctx, *args):
-    pass
+    if ctx.message.channel.id == 854807192997330944:
+        if args:
+            embed, error = remates.pujar_remate(message=ctx.message)
+            if not error:
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(embed=embed)
+        else:
+            await ctx.send('$puja\n*id \n*Ñ ')
         
 @bot.command(name='crear-remate')
 async def crear(ctx, *args, **kwargs):
