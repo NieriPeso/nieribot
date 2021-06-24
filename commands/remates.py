@@ -53,6 +53,7 @@ def crear_remate(message):
             # PERSISTENCIA EN MONGO DB
             save = {
                 'ID': id_remate,
+                'id_msg_rem': '',
                 'Rematador': rematador,
                 'Nombre de remate': remate_nombre.replace('\n', ''),
                 'Descripcion del remate': remate_descripcion.replace('\n', ''),
