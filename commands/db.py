@@ -63,8 +63,16 @@ def guardar_puja(id, puja):
     else:
         return False
 
-def guardar_id_mensaje(id):
-    pass
+def guardar_id_mensaje(id_msg_rem):
+    client = MongoClient(config('CONN_STR'))
+    db = client['nieribot']
+    coll = db['remates']
+    id = cantidad_remates()
+    coll.update_one(
+        {'ID': id},
+        {'$set': {'id_msg_rem': id_msg_rem}}
+    )
+    client.close()
 
 # ========================================================================
 

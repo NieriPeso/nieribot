@@ -21,73 +21,41 @@ async def on_raw_reaction_add(payload):
 
         if payload.emoji.name == 'acepto':
             role = discord.utils.get(guild.roles, name='nieri')
-            #print(f'Role: {role}')
         else:
             role = None
-            #print('Otro emoji agregado')
 
         if role is not None:
             member = payload.member
             if member is not None:
                 await payload.member.add_roles(role)
-                #print('Rol agregado, nuevo nieri')
 
 @bot.event
 async def on_message(message):
+
     await bot.process_commands(message)
+
     if message.author == bot.user:
         if message.channel.id == 854807245509492808:
-            guardar_id_mensaje(id=message.id)
-            print(message.id)
+            guardar_id_mensaje(id_msg_rem=message.id)
         else:
             return
-
-    # (HAY QUE HACER EL FILTRO PARA LOS MODERADORES USAR SOLAMENTE)
-    # if message.content.lower().startswith(clear_chat):
-    #     await chat.limpiar_chat(message=message)
 
     if message.content.lower().startswith(nuevo_nieri):
         embed = nuevonieri.registro(message=message, name=message.author.name)
         await message.channel.send(embed=embed)
 
-    # ============================== REMATE-VALORATE ==============================
-    # COMANDO PARA PLANTARSE A UN REMATE
-    # if message.content.lower().startswith(puja) or message.content.startswith(oferta):
-    #     if message.channel.id == 854807192997330944:
-    #         embed, error = remates.pujar_remate(message=message)
-    #         if not error:
-    #             await message.channel.send(embed=embed)
-    #         else:
-    #             await message.channel.send(embed=embed)
-
-    # COMANDO PARA EL REGISTRO DE LOS REMATES
-    # if message.content.lower().startswith(crear_remate):
-    #     if message.channel.id == 854807192997330944:
-    #         embed, error = remates.crear_remate(message=message)
-    #         if not embed and not error:
-    #             return
-    #         if not error:
-    #             channel = bot.get_channel(854807245509492808)
-    #             await channel.send(embed=embed)
-    #         else:
-    #             await message.channel.send(embed=embed)
-
-        # ===========================================================================
-
-    # ESCUCHAR EL COMANDO '$nieripeso' EN CUALQUIER CANAL PARA ENVIAR INSTRUCCIONES POR PRIV.
-    if message.content.lower().startswith(nieripeso):
-        for msg in instrucciones:
-            await message.author.send(msg)
-        
-@bot.command
-async def send_help(ctx):
-    await send_help()
+# COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
+@bot.command(name='nieripeso')
+async def instrucciones(ctx):
+    for msg in instrucciones:
+        ctx.message.author.send(msg)
 
 # BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
 @bot.command(name='clear-chat')
 async def limpieza(ctx, arg=None):
     await chat.limpiar_chat(ctx=ctx, arg=arg)
 
+# COMANDO PARA PUJAR EN LOS REMATES
 @bot.command(name='puja')
 async def pujar(ctx, *args):
     if ctx.message.channel.id == 854807192997330944:
@@ -99,7 +67,8 @@ async def pujar(ctx, *args):
                 await ctx.send(embed=embed)
         else:
             await ctx.send('$puja\n*id \n*Ñ ')
-        
+
+# COMANDO PARA CREAR UN REMATE     
 @bot.command(name='crear-remate')
 async def crear(ctx, *args, **kwargs):
     if ctx.channel.id == 854807192997330944:
