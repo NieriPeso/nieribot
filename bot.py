@@ -40,9 +40,11 @@ async def on_message(message):
         else:
             return
 
-    if message.content.lower().startswith(nuevo_nieri):
-        embed = nuevonieri.registro(message=message, name=message.author.name)
-        await message.channel.send(embed=embed)
+# COMANDO PARA REGISTRAR NUEVOSNIERIS Y SUS WALLETS PARA LA ENTREGA DE $Ñ
+@bot.command(name='nuevonieri')
+async def registro_nieri(ctx, wallet):
+    embed = nuevonieri.registro(wallet=wallet, name=ctx.message.author.name)
+    await ctx.send(embed=embed)
 
 # COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
 @bot.command(name='nieripeso')
