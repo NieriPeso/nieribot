@@ -8,7 +8,7 @@ from datetime import datetime
 def comprobar_si_termino(id):
     fecha_puja = datetime.now().strftime('%d/%m/%y %H:%M')
     fecha_puja = fecha_puja.split(' ')
-    datos = obtener_datos(id=id)['Termina']
+    datos = obtener_datos(id=id)['cierre']
     datos = datos.split(' ')
     if int(fecha_puja[0].split('/')[0]) >= int(datos[0].split('/')[0]) and int(fecha_puja[0].split('/')[1]) >= int(datos[0].split('/')[1]) and int(fecha_puja[0].split('/')[2]) >= int(datos[0].split('/')[2]):
         if int(fecha_puja[1].split(':')[0]) >= int(datos[1].split(':')[0]) and int(fecha_puja[1].split(':')[1]) >= int(datos[1].split(':')[1]):
@@ -24,7 +24,7 @@ def terminar_remate(id):
     coll = client['nieribot']['remates']
     coll.update_one(
         {'ID': id},
-        {'$set':{'Activo':False}}
+        {'$set':{'activo':False}}
     )
     client.close()
 
@@ -56,21 +56,21 @@ def guardar_puja(id, puja):
         coll = db['remates']
         coll.update_one(
             {'ID': id},
-            {'$push': {'Postores': puja}}
+            {'$push': {'postores': puja}}
         )
         client.close()
         return True
     else:
         return False
 
-def guardar_id_mensaje(id_msg_rem):
+def guardar_id_mensaje(msg_id):
     client = MongoClient(config('CONN_STR'))
     db = client['nieribot']
     coll = db['remates']
-    id = cantidad_remates()
+    id = cantidad_remates() - 1
     coll.update_one(
         {'ID': id},
-        {'$set': {'id_msg_rem': id_msg_rem}}
+        {'$set': {'message_id': msg_id}}
     )
     client.close()
 

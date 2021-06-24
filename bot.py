@@ -36,7 +36,7 @@ async def on_message(message):
 
     if message.author == bot.user:
         if message.channel.id == 854807245509492808:
-            guardar_id_mensaje(id_msg_rem=message.id)
+            guardar_id_mensaje(msg_id=message.id)
         else:
             return
 
@@ -62,8 +62,11 @@ async def limpieza(ctx, arg=None):
 async def pujar(ctx, *args):
     if ctx.message.channel.id == 854807192997330944:
         if args:
-            embed, error = remates.pujar_remate(message=ctx.message)
+            embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
+                channel = bot.get_channel(854807245509492808)
+                msg = await channel.fetch_message(id_msg)
+                await chat.editar_msg_remate(message=msg, embed=edit)
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(embed=embed)
