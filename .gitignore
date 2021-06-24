@@ -1,3 +1,4 @@
 .env
 nuevosnieris.json
 remates.json
+db_manager.py

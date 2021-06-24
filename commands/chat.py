@@ -13,3 +13,6 @@ async def limpiar_chat(ctx, arg):
             colour=discord.Color.orange()
         )
         await ctx.channel.send(embed=embed)
+
+async def editar_msg_remate(message, embed):
+    await message.edit(embed=embed)
