@@ -3,11 +3,9 @@ from . import db
 
 enable = False
 
-def registro(message,  name):
+def registro(wallet,  name):
     if enable:
-        sep = message.content.split(' ')
-        if len(sep) > 1:
-            return db.nuevo_nieri(name=message.author.name, wallet=sep[1])
+        return db.nuevo_nieri(name=name, wallet=wallet)
 
     else:
         embed = discord.Embed(
