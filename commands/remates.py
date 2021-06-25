@@ -36,13 +36,13 @@ def crear_remate(message):
                 embed.add_field(name='Ejemplo de precio base en <:nieripeso:852661603321249824>:', value='1000')
                 return embed, 1
 
-            if len(datos[4]) > 6:
+            if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][14] == ' ' and datos[4][8] == ':':
                 final = str(datos[4][6:])
 
             else:
                 embed = discord.Embed(
                     title='ERROR EN FECHA',
-                    description='Es obligatorio escribir la fecha y hora de finalización',
+                    description='Es obligatorio escribir la fecha y hora de finalización de la manera que se especifica a continuación',
                     colour=discord.Color.orange()
                 )
                 embed.add_field(name='Formato de ejemplo de fecha:', value='20/04/22 16:20')
@@ -117,7 +117,7 @@ def pujar_remate(message):
             )
             return embed, True, None, None
 
-        cantidad = int(datos[2][2:].replace('\n', '').strip())
+        cantidad = int(datos[2][2:].strip())
         puja = [datetime.now().strftime('%d/%m/%y %H:%M'), message.author.name, cantidad, message.author.id]
 
         try:
@@ -129,18 +129,30 @@ def pujar_remate(message):
                 colour=discord.Color.red()
             )
             return embed, True, None, None
-        
-        postores = temp['postores']
 
-        if temp["rematador"] == message.author.name:
+        postores = temp["postores"]
+
+        if temp['activo'] == False:
+            print('remate terminado')
+            embed = discord.Embed(
+                title='ERROR DE TIEMPO',
+                description=f'{message.author.name}, esta puja ya ha terminado.',
+                colour=discord.Color.orange()
+            )
+            embed.add_field(name='GANADOR/A:', value=f'{postores[-1][1]}', inline=True)
+            embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=True)
+            return embed, True, 1, None
+
+        elif temp["rematador"] == message.author.name:
             embed = discord.Embed(
                 title='ERROR EN PUJA',
                 description=f'{message.author.name}, no puedes pujar en tu propio remate.',
                 colour=discord.Color.orange()
             )
             return embed, True, None, None
-            
+
         if postores == [] and cantidad >= temp['base'] or postores[-1][2] < cantidad:
+
             saved = db.guardar_puja(id=id_rem_apostar, puja=puja)
 
             if saved:
@@ -176,10 +188,10 @@ def pujar_remate(message):
                 embed = discord.Embed(
                     title='ERROR DE TIEMPO',
                     description=f'{message.author.name}, esta puja ya ha terminado.',
-                    colour=discord.Color.red()
+                    colour=discord.Color.orange()
                 )
                 embed.add_field(name='GANADOR/A:', value=f'{postores[-1][1]}', inline=False)
-                embed.add_field(name='Cantidad pujada:', value=f'{postores[-1][2]}', inline=False)
+                embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
                 return embed, True, None, None
 
         else:
