@@ -11,13 +11,19 @@ def comprobar_si_termino(id):
     datos = obtener_datos(id=id)['cierre']
     datos = datos.split(' ')
     if int(fecha_puja[0].split('/')[0]) >= int(datos[0].split('/')[0]) and int(fecha_puja[0].split('/')[1]) >= int(datos[0].split('/')[1]) and int(fecha_puja[0].split('/')[2]) >= int(datos[0].split('/')[2]):
-        if int(fecha_puja[1].split(':')[0]) >= int(datos[1].split(':')[0]) and int(fecha_puja[1].split(':')[1]) >= int(datos[1].split(':')[1]):
+        if int(fecha_puja[1].split(':')[0]) == int(datos[1].split(':')[0]) and int(fecha_puja[1].split(':')[1]) >= int(datos[1].split(':')[1]) - 5 and int(fecha_puja[1].split(':')[1]) <= int(datos[1].split(':')[1]):
+            alargar_remate(id=id)
+            return False
+        elif int(fecha_puja[1].split(':')[0]) >= int(datos[1].split(':')[0]) and int(fecha_puja[1].split(':')[1]) >= int(datos[1].split(':')[1]):
             terminar_remate(id=id)
             return True
         else:
             return False
     else:
         return False
+
+def alargar_remate(id):
+    pass
 
 def terminar_remate(id):
     client = MongoClient(config('CONN_STR'))

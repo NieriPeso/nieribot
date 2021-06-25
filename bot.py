@@ -1,4 +1,5 @@
 import discord
+from discord import colour
 from discord.ext import commands
 from decouple import config
 from utils.constants import *
@@ -7,7 +8,7 @@ from commands import remates, nuevonieri, chat
 from commands.db import guardar_id_mensaje
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='$', help_command=None)
 
 @bot.event
 async def on_ready():
@@ -53,7 +54,7 @@ async def instrucciones(ctx):
         ctx.message.author.send(msg)
 
 # BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
-@bot.command(name='clear-chat')
+@bot.command(name='clear-chat', cog='Administración')
 async def limpieza(ctx, arg=None):
     await chat.limpiar_chat(ctx=ctx, arg=arg)
 
@@ -63,6 +64,7 @@ async def pujar(ctx, *args):
     if ctx.message.channel.id == 854807192997330944:
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
+            print(edit)
             if not error:
                 channel = bot.get_channel(854807245509492808)
                 msg = await channel.fetch_message(id_msg)
@@ -75,9 +77,9 @@ async def pujar(ctx, *args):
 
 # COMANDO PARA CREAR UN REMATE     
 @bot.command(name='crear-remate')
-async def crear(ctx, *args, **kwargs):
+async def crear(ctx, *args):
     if ctx.channel.id == 854807192997330944:
-        if args or kwargs:
+        if args:
             embed, error = remates.crear_remate(message=ctx.message)
 
             if not embed and not error:
@@ -96,6 +98,16 @@ async def crear(ctx, *args, **kwargs):
 
         else:
             await ctx.send('$crear-remate\n*nombre \n*descripcion \n*base \n*final')
+
+# COMANDO DE AYUDA PARA USAR EL BOT
+@bot.command(name='ayuda')
+async def ayuda(ctx, *args):
+    embed = discord.Embed(
+        title='LO SIENTO',
+        description='Este comando está en construccion',
+        colour=discord.Color.dark_theme()
+    )
+    await ctx.send(embed=embed)
 
 # EJECUCIÓN DEL BOT
 bot.run(config('TOKEN'))
