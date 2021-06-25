@@ -64,7 +64,6 @@ async def pujar(ctx, *args):
     if ctx.message.channel.id == 854807192997330944:
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
-            print(edit)
             if not error:
                 channel = bot.get_channel(854807245509492808)
                 msg = await channel.fetch_message(id_msg)
