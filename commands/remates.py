@@ -36,7 +36,7 @@ def crear_remate(message):
                 embed.add_field(name='Ejemplo de precio base en <:nieripeso:852661603321249824>:', value='1000')
                 return embed, 1
 
-            if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][14] == ' ' and datos[4][8] == ':':
+            if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][14] == ' ' and datos[4][17] == ':':
                 final = str(datos[4][6:])
 
             else:
