@@ -37,7 +37,16 @@ def crear_remate(message):
                 return embed, 1
 
             if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][14] == ' ' and datos[4][17] == ':':
+                ahora = datetime.now().strftime('%d/%m/%y %H:%M').split(' ')
                 final = str(datos[4][6:])
+                if int(ahora[0].split('/')[0]) >= int(final.split(' ')[0].split('/')[0]) and int(ahora[0].split('/')[1]) >= int(final.split(' ')[0].split('/')[1]) and int(ahora[0].split('/')[2]) >= int(final.split(' ')[0].split('/')[2]) and int(ahora[1].split(':')[0]) >= int(final.split(' ')[1].split(':')[0]) and int(ahora[1].split(':')[1]) >= int(final.split(' ')[1].split(':')[1]):
+                    embed = discord.Embed(
+                        title='ERROR EN FECHA',
+                        description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya',
+                        colour=discord.Color.orange()
+                    )
+                    embed.add_field(name='Fecha y hora en este momento:', value=datetime.now().strftime('%d/%m/%y %H:%M'))
+                    return embed, 1
 
             else:
                 embed = discord.Embed(
