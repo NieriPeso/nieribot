@@ -1,5 +1,4 @@
 import discord
-from discord import colour
 from discord.ext import commands
 from decouple import config
 from utils.constants import *
@@ -54,7 +53,7 @@ async def instrucciones(ctx):
         ctx.message.author.send(msg)
 
 # BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
-@bot.command(name='clear-chat', cog='Administración')
+@bot.command(name='clear-chat')
 async def limpieza(ctx, arg=None):
     await chat.limpiar_chat(ctx=ctx, arg=arg)
 
@@ -71,6 +70,8 @@ async def pujar(ctx, *args):
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(embed=embed)
+                if edit:
+                    await ctx.send('$puja\n*id 1\n*Ñ 1000')
         else:
             await ctx.send('$puja\n*id \n*Ñ ')
 
@@ -79,7 +80,7 @@ async def pujar(ctx, *args):
 async def crear(ctx, *args):
     if ctx.channel.id == 854807192997330944:
         if args:
-            embed, error = remates.crear_remate(message=ctx.message)
+            embed, error, confirm = remates.crear_remate(message=ctx.message)
 
             if not embed and not error:
                 return
@@ -87,6 +88,7 @@ async def crear(ctx, *args):
             if error == 0:
                 channel = bot.get_channel(854807245509492808)
                 await channel.send(embed=embed)
+                await ctx.message.channel.send(embed=confirm)
 
             elif error == 1:
                 await ctx.channel.send(embed=embed)
@@ -96,7 +98,7 @@ async def crear(ctx, *args):
                 await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/22 16:20')
 
         else:
-            await ctx.send('$crear-remate\n*nombre \n*descripcion \n*base \n*final')
+            await ctx.send('$crear-remate\n*nombre \n*descripcion \n*base \n*final ')
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name='ayuda')
