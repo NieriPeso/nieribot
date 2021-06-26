@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import past_date, get_date
+from utils.time import end, past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -137,8 +137,9 @@ def pujar_remate(message):
             )
             embed.set_footer(text='EJEMPLO:')
             return embed, True, True, None
-        if datos[1][3:].replace('\n','').isnumeric():
-            id_rem_apostar = int(datos[1][3:].replace('\n', ''))
+        if datos[1][3:].replace('\n','').strip().isnumeric():
+            print(f'"{datos[1][3:]}"')
+            id_rem_apostar = int(datos[1][3:].replace('\n', '').strip())
         else:
             embed = discord.Embed(
                 title='ERROR EN ID',
@@ -159,7 +160,7 @@ def pujar_remate(message):
 
         postores = temp["postores"]
 
-        if past_date(temp['cierre']):
+        if end(temp['cierre']):
             db.terminar_remate(id=id_rem_apostar)
             embed = discord.Embed(
                     title='ERROR DE TIEMPO',
