@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import past_date
+from utils.time import past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -53,7 +53,7 @@ def crear_remate(message):
                         description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya',
                         colour=discord.Color.orange()
                     )
-                    embed.add_field(name='Fecha y hora en este momento:', value=N.strftime('%d/%m/%y %H:%M'))
+                    embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
                     return embed, 1, None
 
             else:
