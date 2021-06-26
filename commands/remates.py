@@ -184,7 +184,7 @@ def pujar_remate(message):
             )
             return embed, True, None, None
 
-        puja = [datetime.now().strftime('%d/%m/%y %H:%M:%S'), message.author.name, cantidad, message.author.id]
+        puja = [get_date().strftime('%d/%m/%y %H:%M:%S'), message.author.name, cantidad, message.author.id]
 
         if temp["rematador"] == message.author.name:
             embed = discord.Embed(
