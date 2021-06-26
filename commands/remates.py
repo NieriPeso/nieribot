@@ -167,7 +167,7 @@ def pujar_remate(message):
                     colour=discord.Color.orange()
                 )
             try:
-                embed.add_field(name='GANADOR/A:', value=f'{postores[-1][1]}', inline=False)
+                embed.add_field(name='GANADOR/A:', value=f'<@{postores[-1][3]}> :hammer: :tada:', inline=False)
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
             except:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
