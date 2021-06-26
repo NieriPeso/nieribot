@@ -17,7 +17,6 @@ def end(date):
         hour=int(date.split(' ')[1].split(':')[0]),
         minute=int(date.split(' ')[1].split(':')[1])
     )
-    print((date-now).days, (date-now).seconds)
     if (date-now).days < 0 or (date-now).days == 0 and not (date-now).seconds > 0:
         return True
     return False
@@ -31,7 +30,6 @@ def past_date(date):
         hour=int(date.split(' ')[1].split(':')[0]),
         minute=int(date.split(' ')[1].split(':')[1])
     )
-    print((date-now).days, (date-now).seconds)
     if (date-now).days < 0 or (date-now).days == 0 and (date-now).seconds <= 599:
         return True
     return False

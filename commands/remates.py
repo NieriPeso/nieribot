@@ -129,7 +129,7 @@ def pujar_remate(message):
     try:
         puja = message.content.lower()
         datos = puja.split('*')
-        if not datos[1].startswith('id ') and (not datos[2].startswith('ñ') or not datos[2].startswith('Ñ ')):
+        if not datos[1].startswith('id ') and not datos[2].startswith('ñ '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
                 description=f'{message.author.name}, introduciste mal el comando de puja.',
@@ -138,7 +138,6 @@ def pujar_remate(message):
             embed.set_footer(text='EJEMPLO:')
             return embed, True, True, None
         if datos[1][3:].replace('\n','').strip().isnumeric():
-            print(f'"{datos[1][3:]}"')
             id_rem_apostar = int(datos[1][3:].replace('\n', '').strip())
         else:
             embed = discord.Embed(
@@ -178,13 +177,13 @@ def pujar_remate(message):
             cantidad = int(datos[2][2:].strip())
         else:
             embed = discord.Embed(
-                title='ERROR EN CANTIDAD',
-                description=f'{message.author.name}, la cantidad con la que decides entrar **no es un numero entero.**',
+                title='ERROR EN CANTIDAD DE <:nieripeso:852661603321249824>',
+                description=f'{message.author.name}, la cantidad de <:nieripeso:852661603321249824> con la que decides entrar **no es un numero entero.**',
                 colour=discord.Color.orange()
             )
             return embed, True, None, None
 
-        puja = [get_date().strftime('%d/%m/%y %H:%M:%S'), message.author.name, cantidad, message.author.id]
+        puja = [get_date().strftime('%d/%m/%y %H:%M'), message.author.name, cantidad, message.author.id]
 
         if temp["rematador"] == message.author.name:
             embed = discord.Embed(
@@ -213,9 +212,14 @@ def pujar_remate(message):
             else:
                 edit.add_field(name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
             text = ''
-            for x in range(len(postores)-5, len(postores)):
-                text += f'{postores[x][0]}\t' + '-\t' + f'<@{postores[x][3]}>\t' + '-\t' + f'<:nieripeso:852661603321249824>{str(postores[x][2])}' + '\n'
-            edit.add_field(name='Últimos 5 postores:', value=text, inline=False)
+            if len(postores) > 5:
+                for x in range(len(postores)-5, len(postores)):
+                    text += f'{postores[x][0]}\t' + '-\t' + f'<@{postores[x][3]}>\t' + '-\t' + f'<:nieripeso:852661603321249824>{str(postores[x][2])}' + '\n'
+                edit.add_field(name='Últimos 5 postores:', value=text, inline=False)
+            else:
+                for p in postores:
+                    text += f'{p[0]}\t' + '-\t' + f'<@{p[3]}>' + '-\t' + f'<:nieripeso:852661603321249824>{str(p[2])}' + '\n'
+                edit.add_field(name='Postores:', value=text, inline=False)
 
             embed = discord.Embed(
                 title=f'**{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.**',
