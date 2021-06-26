@@ -50,7 +50,7 @@ def crear_remate(message):
                 if past_date(final):
                     embed = discord.Embed(
                         title='ERROR EN FECHA',
-                        description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya',
+                        description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya o tener un rango de tiempo de remate menor a 10 minutos.',
                         colour=discord.Color.orange()
                     )
                     embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
@@ -171,7 +171,7 @@ def pujar_remate(message):
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
             except:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
-                embed.add_field(name='Nota:', value=f'Lo siento al <@{temp["id_rematador"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
+                embed.add_field(name='Nota:', value=f'Lo siento <@{temp["id_rematador"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
@@ -196,6 +196,8 @@ def pujar_remate(message):
         if postores == [] and cantidad >= temp['base'] or postores[-1][2] < cantidad:
             db.guardar_puja(id=id_rem_apostar, puja=puja)
             temp = db.obtener_datos(id=id_rem_apostar)
+            postores = temp["postores"]
+
             edit = discord.Embed(
                 title=f'{temp["nombre_rem"]}',
                 description=f'{temp["descripcion_rem"]}',
@@ -209,11 +211,11 @@ def pujar_remate(message):
                 edit.set_image(url=temp["foto"])
             else:
                 edit.add_field(name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-            emb_postores = temp["postores"]
             text = ''
-            for i in emb_postores:
-                text += f'{i[0]}\t' + '-\t' + f'<@{i[3]}>\t' + '-\t' + f'<:nieripeso:852661603321249824>{str(i[2])}' + '\n'
-            edit.add_field(name='Postores:', value=text, inline=False)
+            for x in range(len(postores)-5, len(postores)):
+                text += f'{postores[x][0]}\t' + '-\t' + f'<@{postores[x][3]}>\t' + '-\t' + f'<:nieripeso:852661603321249824>{str(postores[x][2])}' + '\n'
+            edit.add_field(name='Últimos 5 postores:', value=text, inline=False)
+
             embed = discord.Embed(
                 title=f'**{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.**',
                 description=f'Este remate fue abierto por **{temp["rematador"]}**',
