@@ -81,6 +81,7 @@ def crear_remate(message):
                 'ID': id_remate,
                 'message_id': 0,
                 'rematador': rematador,
+                'id_rematador': message.author.id,
                 'nombre_rem': remate_nombre,
                 'descripcion_rem': remate_descripcion,
                 'base': base,
@@ -170,7 +171,7 @@ def pujar_remate(message):
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
             except:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
-                embed.add_field(name='Nota:', value=f'Lo siento al {temp["rematador"]},\nParece que a nadie le gustó tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
+                embed.add_field(name='Nota:', value=f'Lo siento al <@{temp["id_rematador"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
