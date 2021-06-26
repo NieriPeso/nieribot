@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import past_date
+from utils.time import past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -53,7 +53,7 @@ def crear_remate(message):
                         description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya',
                         colour=discord.Color.orange()
                     )
-                    embed.add_field(name='Fecha y hora en este momento:', value=N.strftime('%d/%m/%y %H:%M'))
+                    embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
                     return embed, 1, None
 
             else:
@@ -81,6 +81,7 @@ def crear_remate(message):
                 'ID': id_remate,
                 'message_id': 0,
                 'rematador': rematador,
+                'id_rematador': message.author.id,
                 'nombre_rem': remate_nombre,
                 'descripcion_rem': remate_descripcion,
                 'base': base,
@@ -170,7 +171,7 @@ def pujar_remate(message):
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
             except:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
-                embed.add_field(name='Nota:', value=f'Lo siento al {temp["rematador"]},\nParece que a nadie le gustó tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
+                embed.add_field(name='Nota:', value=f'Lo siento al <@{temp["id_rematador"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
