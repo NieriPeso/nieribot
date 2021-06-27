@@ -106,7 +106,7 @@ def crear_remate(message):
                 colour=discord.Color.green()
             )
             embed.add_field(name='ID del remate:', value=f'{id_remate}', inline=False)
-            embed.add_field(name='Rematador:', value=f'{rematador}', inline=False)
+            embed.add_field(name='Rematador:', value=f'<@{message.author.id}>', inline=False)
             embed.add_field(name='Precio base:', value=f'{base}', inline=False)
             embed.add_field(name='Fecha de finalización:', value=f'{final}', inline=False)
             if not img == None:
@@ -119,7 +119,7 @@ def crear_remate(message):
     except:
         embed = discord.Embed(
             title='ERROR CREANDO REMATE',
-            description=f'Lo siento {message.author.name} pero tu remate no pudo registrarse, algo esta mal.\nComprueba como escribiste el comando y corrígelo o pidele ayuda a un mod.',
+            description=f'Lo siento <@{message.author.id}> pero tu remate no pudo registrarse, algo esta mal.\nComprueba como escribiste el comando y corrígelo o pidele ayuda a un mod.',
             colour=discord.Color.red()
         )
         return embed, 1, None
@@ -204,7 +204,7 @@ def pujar_remate(message):
                 colour=discord.Color.green()
             )
             edit.add_field(name='ID del remate:', value=f'{temp["ID"]}', inline=False)
-            edit.add_field(name='Rematador:', value=f'{temp["rematador"]}', inline=False)
+            edit.add_field(name='Rematador:', value=f'<@{temp["id_rematador"]}>', inline=False)
             edit.add_field(name='Precio base:', value=f'{temp["base"]}', inline=False)
             edit.add_field(name='Fecha de finalización:', value=f'{temp["cierre"]}', inline=False)
             if temp["foto"] != None:
@@ -222,8 +222,8 @@ def pujar_remate(message):
                 edit.add_field(name='Postores:', value=text, inline=False)
 
             embed = discord.Embed(
-                title=f'**{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.**',
-                description=f'Este remate fue abierto por **{temp["rematador"]}**',
+                title=f'{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.',
+                description=f'Este remate fue abierto por <@{temp["id_rematador"]}>',
                 colour=discord.Color.green()
             )
             return embed, False, edit, temp["message_id"]

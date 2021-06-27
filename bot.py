@@ -5,6 +5,7 @@ from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
 from commands.db import guardar_id_mensaje
+from commands.help import *
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -101,13 +102,10 @@ async def crear(ctx, *args):
             await ctx.send('$crear-remate\n*nombre \n*descripcion \n*base \n*final ')
 
 # COMANDO DE AYUDA PARA USAR EL BOT
-@bot.command(name='ayuda')
+@bot.command(name=ayuda)
 async def ayuda(ctx, *args):
-    embed = discord.Embed(
-        title='LO SIENTO',
-        description='Este comando está en construccion',
-        colour=discord.Color.dark_theme()
-    )
+    if not args:
+        embed = unvailable(user=ctx.message.author.id)
     await ctx.send(embed=embed)
 
 # EJECUCIÓN DEL BOT
