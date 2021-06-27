@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from decouple import config
 import discord
-from datetime import datetime
 
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -11,6 +10,7 @@ sys.path.append(parentdir)
 from utils.time import get_date
 
 # REMATES
+
 def alargar_remate(id):
     pass
 
@@ -34,6 +34,14 @@ def obtener_datos(id):
     db = client['nieribot']
     coll = db['remates']
     datos = coll.find_one({'ID': id})
+    return datos
+
+def obtener_remates_on():
+    client = MongoClient(config('CONN_STR'))
+    db = client['nieribot']
+    coll = db['remates']
+    datos = coll.find({'activo':True})
+    client.close()
     return datos
 
 def agregar_remate(remate):

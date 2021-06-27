@@ -163,7 +163,7 @@ def pujar_remate(message):
             db.terminar_remate(id=id_rem_apostar)
             embed = discord.Embed(
                     title='ERROR DE TIEMPO',
-                    description=f'{message.author.name}, esta puja ya ha terminado.',
+                    description=f'<@{message.author.id}>, esta puja ya ha terminado.',
                     colour=discord.Color.orange()
                 )
             try:
