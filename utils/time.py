@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
@@ -7,6 +7,12 @@ def get_date():
     now = datetime.now(tz=tz)
     now = datetime(day=now.day,month=now.month,year=now.year,hour=now.hour,minute=now.minute)
     return now
+
+def get_date_future():
+    now = get_date()
+    day_added = timedelta(days=1)
+    date = now + day_added
+    return date.strftime('%d/%m/%Y %H:%M')
 
 def end(date):
     now = get_date()

@@ -6,6 +6,7 @@ from utils.messages import *
 from commands import remates, nuevonieri, chat
 from commands.db import guardar_id_mensaje
 from commands.help import *
+from utils.time import get_date_future
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -35,6 +36,10 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+    # LÓGICA PARA HACER QUE LOS MENSAJES DEL BOT NO SE ESCUCHEN
+    # A MENOS QUE SEA EN EL CANAL DE CARTELERA-REMATES PARA PODER
+    # GUARDAR EL ID EN DB Y PODER EDITAR/BORRAR EL MENSAJE
+    # CUANDO SE REQUIERA
     if message.author == bot.user:
         if message.channel.id == 854807245509492808:
             guardar_id_mensaje(msg_id=message.id)
@@ -99,7 +104,7 @@ async def crear(ctx, *args):
                 await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/22 16:20')
 
         else:
-            await ctx.send('$crear-remate\n*nombre \n*descripcion \n*base \n*final ')
+            await ctx.send(f'$crear-remate\n*nombre \n*descripcion \n*base \n*final {get_date_future()}')
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)
