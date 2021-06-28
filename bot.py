@@ -106,7 +106,7 @@ async def limpieza(ctx, arg=None):
 # COMANDO PARA PUJAR EN LOS REMATES
 @bot.command(name='puja')
 async def pujar(ctx, *args):
-    if ctx.message.channel.id == 854807192997330944:
+    if ctx.message.channel.id == 849410645513207828:
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
@@ -121,10 +121,10 @@ async def pujar(ctx, *args):
         else:
             await ctx.send('$puja\n*id \n*Ñ ')
 
-# COMANDO PARA CREAR UN REMATE     
+# COMANDO PARA CREAR UN REMATE
 @bot.command(name='crear-remate')
 async def crear(ctx, *args):
-    if ctx.channel.id == 854807192997330944:
+    if ctx.channel.id == 849410645513207828:
         if args:
             embed, error, confirm = remates.crear_remate(message=ctx.message)
 
