@@ -20,7 +20,7 @@ def crear_remate(message):
 
         datos = remate.split('*')
 
-        if not datos[1].startswith('nombre ') and not datos[2].startswith('descripcion ') and not datos[3].startswith('base ') and not datos[4].startswith('final '):
+        if not datos[1].startswith('nombre ') or not datos[2].startswith('descripcion ') or not datos[3].startswith('base ') or not datos[4].startswith('final '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
                 description='Los nombres para los campos son **obligatorios**.',
