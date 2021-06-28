@@ -53,6 +53,7 @@ async def on_message(message):
             embed.add_field(name='Precio base <:nieripeso:852661603321249824>:', value=f'{remate["base"]}', inline=False)
             if len(remate["postores"]) > 0:
                 embed.add_field(name='Ganador:', value=f'<@{remate["postores"][-1][3]}>', inline=False)
+                embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{remate["postores"][-1][2]}', inline=False)
             else:
                 embed.add_field(name='Lo siento', value='Parece que nadie realizó una puja en tu remate', inline=False)
             if remate['foto'] != None:
@@ -65,7 +66,7 @@ async def on_message(message):
             channel = bot.get_channel(id=854807192997330944)
             emb = discord.Embed(
                 title='UN REMATE LLEGÓ A SU CIERRE',
-                description=f'Nombre: {remate["nombre_rem"]}',
+                description=f'Nombre: {remate["nombre_rem"]}\nID: {remate["ID"]}',
                 colour=discord.Color.gold()
             )
             emb.add_field(name='REMATADOR:', value=f'<@{remate["id_rematador"]}>', inline=False)
