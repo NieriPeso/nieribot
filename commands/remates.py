@@ -33,7 +33,7 @@ def crear_remate(message):
             id_remate = db.cantidad_remates()
             rematador = message.author.name
             remate_nombre = datos[1][7:].replace('\n','')
-            remate_descripcion = datos[2][12:].replace('\n','')
+            remate_descripcion = datos[2][12:]
             try:
                 base = int(datos[3][5:].replace('\n',''))
             except:

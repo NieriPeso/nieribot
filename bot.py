@@ -144,7 +144,7 @@ async def crear(ctx, *args):
                 await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/22 16:20')
 
         else:
-            await ctx.send(f'$crear-remate\n*nombre \n*descripcion \n*base \n*final {get_date_future()}')
+            await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)
