@@ -63,7 +63,7 @@ async def on_message(message):
             await msg.delete()
 
             # OBTENER CANAL DE REMATE-VALORATE PARA ENVÍAR AVISO
-            channel = bot.get_channel(id=854807192997330944)
+            channel = bot.get_channel(id=849410645513207828)
             emb = discord.Embed(
                 title='UN REMATE LLEGÓ A SU CIERRE',
                 description=f'Nombre: {remate["nombre_rem"]}\nID: {remate["ID"]}',
