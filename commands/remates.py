@@ -226,6 +226,7 @@ def pujar_remate(message):
                 description=f'Este remate fue abierto por <@{temp["id_rematador"]}>',
                 colour=discord.Color.green()
             )
+            embed.add_field(name='Pujaste a:', value=f'{temp["nombre_rem"]}', inline=False)
             return embed, False, edit, temp["message_id"]
 
         else:
