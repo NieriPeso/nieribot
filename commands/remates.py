@@ -85,7 +85,7 @@ def crear_remate(message):
                 'nombre_rem': remate_nombre,
                 'descripcion_rem': remate_descripcion,
                 'base': base,
-                'comienzo': datetime.now().strftime('%d/%m/%y %H:%M'),
+                'comienzo': get_date().strftime('%d/%m/%y %H:%M'),
                 'activo': True,
                 'cierre': final.replace('\n', ''),
                 'postores': [],
