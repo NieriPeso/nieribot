@@ -96,7 +96,7 @@ async def registro_nieri(ctx, wallet):
 @bot.command(name='nieripeso')
 async def instrucciones(ctx):
     for msg in instrucciones:
-        ctx.message.author.send(msg)
+        await ctx.message.author.send(msg)
 
 # BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
 @bot.command(name='clear-chat')
