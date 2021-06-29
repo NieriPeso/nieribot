@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import end, past_date, get_date
+from utils.time import end, get_date_future, past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -246,3 +246,31 @@ def pujar_remate(message):
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
         return embed, True, None, None
+
+
+
+async def crear_remate_command(bot_manager, ctx, *args):
+    # * If is channel id == enabled channel to create a sale 
+    bot = bot_manager.bot
+
+    if ctx.channel.id == bot_manager.workingChannel:
+        if args:
+            embed, error, confirm = crear_remate(message=ctx.message)
+
+            if not embed and not error:
+                return
+
+            if error == 0:
+                channel = bot.get_channel(bot_manager.workingChannel)
+                await channel.send(embed=embed)
+                await ctx.message.channel.send(embed=confirm)
+
+            elif error == 1:
+                await ctx.channel.send(embed=embed)
+            
+            elif error == 2:
+                await ctx.channel.send(embed=embed)
+                await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/22 16:20')
+
+        else:
+            await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')

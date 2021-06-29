@@ -14,3 +14,8 @@ def registro(wallet,  name):
             colour=discord.Color.orange()
         )
         return embed
+
+# COMANDO PARA REGISTRAR NUEVOSNIERIS Y SUS WALLETS PARA LA ENTREGA DE $Ñ
+async def registro_nieri_command(ctx, wallet):
+    embed = registro(wallet=wallet, name=ctx.message.author.name)
+    await ctx.send(embed=embed)

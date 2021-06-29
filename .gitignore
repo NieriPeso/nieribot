@@ -1,3 +1,5 @@
 .env
 db_manager.py
 db_constants.py
+
+bot-env/lib/
