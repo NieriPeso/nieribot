@@ -94,7 +94,7 @@ async def registro_nieri(ctx, wallet):
 
 # COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
 @bot.command(name='nieripeso')
-async def instrucciones(ctx):
+async def instrucciones_priv(ctx):
     for msg in instrucciones:
         await ctx.message.author.send(msg)
 
