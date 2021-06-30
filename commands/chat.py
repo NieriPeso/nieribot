@@ -1,4 +1,5 @@
 import discord
+from utils.messages import instrucciones
 
 async def limpiar_chat(ctx, arg):
     if "admins" in [y.name.lower() for y in ctx.author.roles] or "ñod" in [y.name.lower() for y in ctx.author.roles]:
@@ -16,3 +17,13 @@ async def limpiar_chat(ctx, arg):
 
 async def editar_msg_remate(message, embed):
     await message.edit(embed=embed)
+    
+    
+async def limpiar_chat_command(bot_manager, ctx, arg=None):
+    await limpiar_chat(ctx=ctx, arg=arg)
+
+
+async def nieripeso_instrucciones_priv_command(bot_manager, ctx):
+    for msg in instrucciones:
+        await ctx.message.author.send(msg)
+    

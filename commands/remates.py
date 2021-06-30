@@ -28,93 +28,92 @@ def crear_remate(message):
             )
             embed.set_footer(text='EJEMPLO:')
             return embed, 2, None
+        # ? else
+        id_remate = db.cantidad_remates()
+        rematador = message.author.name
+        remate_nombre = datos[1][7:].replace('\n','')
+        remate_descripcion = datos[2][12:]
+        try:
+            base = int(datos[3][5:].replace('\n',''))
+        except:
+            embed = discord.Embed(
+                title='ERROR EN BASE',
+                description='Tiene que ser un numero entero sin letras',
+                colour=discord.Color.orange()
+            )
+            embed.add_field(name='Ejemplo de precio base en <:nieripeso:852661603321249824>:', value='1000')
+            return embed, 1, None
 
-        else:
-            id_remate = db.cantidad_remates()
-            rematador = message.author.name
-            remate_nombre = datos[1][7:].replace('\n','')
-            remate_descripcion = datos[2][12:]
-            try:
-                base = int(datos[3][5:].replace('\n',''))
-            except:
-                embed = discord.Embed(
-                    title='ERROR EN BASE',
-                    description='Tiene que ser un numero entero sin letras',
-                    colour=discord.Color.orange()
-                )
-                embed.add_field(name='Ejemplo de precio base en <:nieripeso:852661603321249824>:', value='1000')
-                return embed, 1, None
-
-            if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][16] == ' ' and datos[4][19] == ':':
-                final = str(datos[4][6:])
-                if past_date(final):
-                    embed = discord.Embed(
-                        title='ERROR EN FECHA',
-                        description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya o tener un rango de tiempo de remate menor a 10 minutos.',
-                        colour=discord.Color.orange()
-                    )
-                    embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
-                    return embed, 1, None
-
-            else:
+        if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][16] == ' ' and datos[4][19] == ':':
+            final = str(datos[4][6:])
+            if past_date(final):
                 embed = discord.Embed(
                     title='ERROR EN FECHA',
-                    description='Es obligatorio escribir la fecha y hora de finalización de la manera que se especifica a continuación',
+                    description='Es obligatorio escribir una fecha y hora de finalización futura, no puede haber pasado ya o tener un rango de tiempo de remate menor a 10 minutos.',
                     colour=discord.Color.orange()
                 )
-                embed.add_field(name='Formato de ejemplo de fecha:', value='20/04/2022 16:20')
+                embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
                 return embed, 1, None
 
-            try:
-                img = message.attachments[0].url
-            except:
-                img = None
-
-            # CONVERTIR PRECIO A NUMERO ENTERO
-            try:
-                base = int(base)
-            except ValueError:
-                base = 0
-
-            # PERSISTENCIA EN MONGO DB
-            save = {
-                'ID': id_remate,
-                'message_id': 0,
-                'rematador': rematador,
-                'id_rematador': message.author.id,
-                'nombre_rem': remate_nombre,
-                'descripcion_rem': remate_descripcion,
-                'base': base,
-                'comienzo': get_date().strftime('%d/%m/%y %H:%M'),
-                'activo': True,
-                'cierre': final.replace('\n', ''),
-                'postores': [],
-                'foto': img
-            }
-
-            db.agregar_remate(save)
-
-            confirm = discord.Embed(
-                title='Se ha creado un remate',
-                description=f'Titulo: {remate_nombre}\nID: {id_remate}\nBase: <:nieripeso:852661603321249824>{base}',
-                colour=discord.Color.green()
-            )
-
+        else:
             embed = discord.Embed(
-                title=f'{remate_nombre}',
-                description=f'{remate_descripcion}',
-                colour=discord.Color.green()
+                title='ERROR EN FECHA',
+                description='Es obligatorio escribir la fecha y hora de finalización de la manera que se especifica a continuación',
+                colour=discord.Color.orange()
             )
-            embed.add_field(name='ID del remate:', value=f'{id_remate}', inline=False)
-            embed.add_field(name='Rematador:', value=f'<@{message.author.id}>', inline=False)
-            embed.add_field(name='Precio base:', value=f'{base}', inline=False)
-            embed.add_field(name='Fecha de finalización:', value=f'{final}', inline=False)
-            if not img == None:
-                embed.set_image(url=img)
-            else:
-                embed.add_field(
-                    name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-            return embed, 0, confirm
+            embed.add_field(name='Formato de ejemplo de fecha:', value='20/04/2022 16:20')
+            return embed, 1, None
+
+        try:
+            img = message.attachments[0].url
+        except:
+            img = None
+
+        # CONVERTIR PRECIO A NUMERO ENTERO
+        try:
+            base = int(base)
+        except ValueError:
+            base = 0
+
+        # PERSISTENCIA EN MONGO DB
+        save = {
+            'ID': id_remate,
+            'message_id': 0,
+            'rematador': rematador,
+            'id_rematador': message.author.id,
+            'nombre_rem': remate_nombre,
+            'descripcion_rem': remate_descripcion,
+            'base': base,
+            'comienzo': get_date().strftime('%d/%m/%y %H:%M'),
+            'activo': True,
+            'cierre': final.replace('\n', ''),
+            'postores': [],
+            'foto': img
+        }
+
+        db.agregar_remate(save)
+
+        confirm = discord.Embed(
+            title='Se ha creado un remate',
+            description=f'Titulo: {remate_nombre}\nID: {id_remate}\nBase: <:nieripeso:852661603321249824>{base}',
+            colour=discord.Color.green()
+        )
+
+        embed = discord.Embed(
+            title=f'{remate_nombre}',
+            description=f'{remate_descripcion}',
+            colour=discord.Color.green()
+        )
+        embed.add_field(name='ID del remate:', value=f'{id_remate}', inline=False)
+        embed.add_field(name='Rematador:', value=f'<@{message.author.id}>', inline=False)
+        embed.add_field(name='Precio base:', value=f'{base}', inline=False)
+        embed.add_field(name='Fecha de finalización:', value=f'{final}', inline=False)
+        if not img == None:
+            embed.set_image(url=img)
+        else:
+            embed.add_field(
+                name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
+        return embed, 0, confirm
 
     except:
         embed = discord.Embed(
@@ -253,7 +252,7 @@ async def crear_remate_command(bot_manager, ctx, *args):
     # * If is channel id == enabled channel to create a sale 
     bot = bot_manager.bot
 
-    if ctx.channel.id == bot_manager.workingChannel:
+    if ctx.channel.id == bot_manager.working_channel:
         if args:
             embed, error, confirm = crear_remate(message=ctx.message)
 
@@ -261,7 +260,7 @@ async def crear_remate_command(bot_manager, ctx, *args):
                 return
 
             if error == 0:
-                channel = bot.get_channel(bot_manager.workingChannel)
+                channel = bot.get_channel(bot_manager.working_channel)
                 await channel.send(embed=embed)
                 await ctx.message.channel.send(embed=confirm)
 

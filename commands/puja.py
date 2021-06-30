@@ -1,10 +1,9 @@
-from utils import remates
-from commands import chat
+from commands import chat, remates
 
 # COMANDO PARA PUJAR EN LOS REMATES
-async def pujar(bot_manager, ctx, *args):
+async def pujar_command(bot_manager, ctx, *args):
   bot = bot_manager.bot
-  if ctx.message.channel.id == 849410645513207828:
+  if ctx.message.channel.id == bot_manager.working_channel:
     if args:
         embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
         if not error:
