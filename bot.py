@@ -38,7 +38,7 @@ async def on_message(message):
     # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
     remates_on = obtener_remates_on()
     for remate in remates_on:
-        if remate['activo'] == False or end(remate['cierre']):
+        if end(remate['cierre']):
             terminar_remate(id=remate['ID'])
             # OBTENER CANAL DE CARTELERA Y EL MSG DEL REMATE FINALIZADO
             cartelera = bot.get_channel(id=854807245509492808)
