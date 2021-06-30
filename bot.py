@@ -38,7 +38,7 @@ async def on_message(message):
     # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
     remates_on = obtener_remates_on()
     for remate in remates_on:
-        if end(remate['cierre']):
+        if remate['activo'] == False or end(remate['cierre']):
             terminar_remate(id=remate['ID'])
             # OBTENER CANAL DE CARTELERA Y EL MSG DEL REMATE FINALIZADO
             cartelera = bot.get_channel(id=854807245509492808)
@@ -87,25 +87,31 @@ async def on_message(message):
             return
 
 # COMANDO PARA REGISTRAR NUEVOSNIERIS Y SUS WALLETS PARA LA ENTREGA DE $Ñ
-@bot.command(name='nuevonieri')
+@bot.command(name=nuevo_nieri)
 async def registro_nieri(ctx, wallet):
     embed = nuevonieri.registro(wallet=wallet, name=ctx.message.author.name)
     await ctx.send(embed=embed)
 
 # COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
-@bot.command(name='nieripeso')
+@bot.command(name=nieripeso)
+async def instrucciones_priv(ctx):
+    for msg in instrucciones:
+        await ctx.message.author.send(msg)
+
+# COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
+@bot.command(name=ñeripeso)
 async def instrucciones_priv(ctx):
     for msg in instrucciones:
         await ctx.message.author.send(msg)
 
 # BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
-@bot.command(name='clear-chat')
+@bot.command(name=clear_chat)
 async def limpieza(ctx, arg=None):
     await chat.limpiar_chat(ctx=ctx, arg=arg)
 
 # COMANDO PARA PUJAR EN LOS REMATES
-@bot.command(name='puja')
-async def pujar(ctx, *args):
+@bot.command(name=puja)
+async def puja_rem(ctx, *args):
     if ctx.message.channel.id == 849410645513207828:
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
@@ -121,8 +127,26 @@ async def pujar(ctx, *args):
         else:
             await ctx.send('$puja\n*id \n*Ñ ')
 
+# COMANDO PARA PUJAR EN LOS REMATES
+@bot.command(name=pujar)
+async def pujar_rem(ctx, *args):
+    if ctx.message.channel.id == 849410645513207828:
+        if args:
+            embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
+            if not error:
+                channel = bot.get_channel(854807245509492808)
+                msg = await channel.fetch_message(id_msg)
+                await chat.editar_msg_remate(message=msg, embed=edit)
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send(embed=embed)
+                if edit:
+                    await ctx.send('$pujar\n*id 1\n*Ñ 1000')
+        else:
+            await ctx.send('$pujar\n*id \n*Ñ ')
+
 # COMANDO PARA CREAR UN REMATE
-@bot.command(name='crear-remate')
+@bot.command(name=crear_remate)
 async def crear(ctx, *args):
     if ctx.channel.id == 849410645513207828:
         if args:
@@ -145,6 +169,33 @@ async def crear(ctx, *args):
 
         else:
             await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
+
+@bot.command(name=ir_al_super)
+async def send_data(ctx):
+    import urllib.request, json, requests
+
+    headers = {
+        "x-api-key":'DAJEU@hK4JSHD8d19238sdhdshahd2198172@d9sad09ad128973'
+    }
+
+    body = {
+        'id':ctx.message.author.id,
+        'user':ctx.message.author.name,
+        'photo':str(ctx.message.author.avatar_url)
+    }
+
+    endpoint = 'https://nieripesos-dev.vercel.app/api/signIn'
+
+    req = requests.post(endpoint, headers=headers, data=body)
+    data = req.json()
+    
+    channel = bot.get_channel(853818973085761567)
+    embed = discord.Embed(
+        title=f'{ctx.message.author.name}',
+        description=f'[ABRIR EL SUPER](https://nieripesos-dev.vercel.app/marketplace?token={data["token"]})',
+        colour=discord.Color.green()
+    )
+    await channel.send(embed=embed)
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)

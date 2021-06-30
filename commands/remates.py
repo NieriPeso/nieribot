@@ -20,7 +20,7 @@ def crear_remate(message):
 
         datos = remate.split('*')
 
-        if not datos[1].startswith('nombre ') or not datos[2].startswith('descripcion ') or not datos[3].startswith('base ') or not datos[4].startswith('final '):
+        if not datos[1].startswith('nombre ') or not (datos[2].startswith('descripcion ') or datos[2].startswith('descripción ')) or not datos[3].startswith('base ') or not datos[4].startswith('final '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
                 description='Los nombres para los campos son **obligatorios**.',
@@ -129,7 +129,7 @@ def pujar_remate(message):
     try:
         puja = message.content.lower()
         datos = puja.split('*')
-        if not datos[1].startswith('id ') and not datos[2].startswith('ñ '):
+        if not datos[1].startswith('id ') or not datos[2].startswith('ñ '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
                 description=f'{message.author.name}, introduciste mal el comando de puja.',

@@ -57,9 +57,8 @@ La misma está debajo del ícono y el nombre de tu wallet, algo así como: (0x??
 
 ***Por último debes llenar un formulario para que te puedan llegar tus $ÑERIS y BNB***
 
-El siguiente se encuentra en este link:
-    ''',
-    '''
+El formulario se encuentra en este link:
+
 https://docs.google.com/forms/d/e/1FAIpQLSc0QoStNmF7TEPIrE-izazBC3q_WSB6FsS0VeBFJFgARNUk8A/viewform?embedded=true%22%3E
     '''
 ]
