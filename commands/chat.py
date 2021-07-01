@@ -1,7 +1,8 @@
 import discord
+from .validation import validate_permissions
 
 async def limpiar_chat(ctx, arg):
-    if "admins" in [y.name.lower() for y in ctx.author.roles] or "ñod" in [y.name.lower() for y in ctx.author.roles]:
+    if validate_permissions(ctx):
         if arg == None:
             await ctx.channel.purge(limit=50)
         else:

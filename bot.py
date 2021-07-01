@@ -172,7 +172,7 @@ async def crear(ctx, *args):
 
 @bot.command(name=ir_al_super)
 async def send_data(ctx):
-    import urllib.request, json, requests
+    import requests
 
     headers = {
         "x-api-key":'DAJEU@hK4JSHD8d19238sdhdshahd2198172@d9sad09ad128973'
@@ -184,18 +184,15 @@ async def send_data(ctx):
         'photo':str(ctx.message.author.avatar_url)
     }
 
-    endpoint = 'https://nieripesos-dev.vercel.app/api/signIn'
-
-    req = requests.post(endpoint, headers=headers, data=body)
+    req = requests.post('https://nieripesos-dev.vercel.app/api/signIn', headers=headers, data=body)
     data = req.json()
     
-    channel = bot.get_channel(853818973085761567)
     embed = discord.Embed(
         title=f'{ctx.message.author.name}',
         description=f'[ABRIR EL SUPER](https://nieripesos-dev.vercel.app/marketplace?token={data["token"]})',
         colour=discord.Color.green()
     )
-    await channel.send(embed=embed)
+    await ctx.message.author.send(embed=embed)
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)
