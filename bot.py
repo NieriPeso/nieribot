@@ -189,13 +189,13 @@ async def send_data(ctx):
     req = requests.post(endpoint, headers=headers, data=body)
     data = req.json()
     
-    channel = bot.get_channel(853818973085761567)
     embed = discord.Embed(
         title=f'{ctx.message.author.name}',
-        description=f'[ABRIR EL SUPER](https://nieripesos-dev.vercel.app/marketplace?token={data["token"]})',
+        description=f'[ABRIR EL SUPER](https://nieripeso-dev.vercel.app/marketplace?token={data["token"]})',
         colour=discord.Color.green()
     )
-    await channel.send(embed=embed)
+    user = ctx.author
+    await user.send(embed=embed)
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)
