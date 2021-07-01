@@ -184,7 +184,7 @@ async def send_data(ctx):
         'photo':str(ctx.message.author.avatar_url)
     }
 
-    endpoint = 'https://nieripesos-dev.vercel.app/api/signIn'
+    endpoint = 'https://nieripeso-dev.vercel.app/api/signIn'
 
     req = requests.post(endpoint, headers=headers, data=body)
     data = req.json()
