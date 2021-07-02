@@ -227,6 +227,7 @@ def pujar_remate(message):
                 colour=discord.Color.green()
             )
             embed.add_field(name='Pujaste a:', value=f'{temp["nombre_rem"]}', inline=False)
+            embed.add_field(name='Post de remate', value=f'[Remate en cartelera](https://discord.com/channels/847456853465497601/854807245509492808/{temp["message_id"]})', inline=False)
             return embed, False, edit, temp["message_id"]
 
         else:
