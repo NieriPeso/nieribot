@@ -7,6 +7,7 @@ from commands import remates, nuevonieri, chat
 from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
 from commands.help import *
 from utils.time import get_date_future, end
+from commands.validation import validate_channel
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -81,7 +82,7 @@ async def on_message(message):
     # GUARDAR EL ID EN DB Y PODER EDITAR/BORRAR EL MENSAJE
     # CUANDO SE REQUIERA
     if message.author == bot.user:
-        if message.channel.id == 854807245509492808:
+        if validate_channel(message.channel.id, key='cartelera-remate'):
             guardar_id_mensaje(msg_id=message.id)
         else:
             return
@@ -112,7 +113,7 @@ async def limpieza(ctx, arg=None):
 # COMANDO PARA PUJAR EN LOS REMATES
 @bot.command(name=puja)
 async def puja_rem(ctx, *args):
-    if ctx.message.channel.id == 849410645513207828:
+    if validate_channel(ctx.channel.id, key='remate-valorate'):
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
@@ -130,7 +131,7 @@ async def puja_rem(ctx, *args):
 # COMANDO PARA PUJAR EN LOS REMATES
 @bot.command(name=pujar)
 async def pujar_rem(ctx, *args):
-    if ctx.message.channel.id == 849410645513207828:
+    if validate_channel(ctx.channel.id, key='remate-valorate'):
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
@@ -148,7 +149,7 @@ async def pujar_rem(ctx, *args):
 # COMANDO PARA CREAR UN REMATE
 @bot.command(name=crear_remate)
 async def crear(ctx, *args):
-    if ctx.channel.id == 849410645513207828:
+    if validate_channel(ctx.channel.id, key='remate-valorate'):
         if args:
             embed, error, confirm = remates.crear_remate(message=ctx.message)
 
@@ -169,6 +170,10 @@ async def crear(ctx, *args):
 
         else:
             await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
+
+@bot.command(name=agregar_foto)
+async def add_picture(ctx, id):
+    pass
 
 @bot.command(name=ir_al_super)
 async def send_data(ctx):
@@ -198,10 +203,23 @@ async def send_data(ctx):
 
 # COMANDO DE AYUDA PARA USAR EL BOT
 @bot.command(name=ayuda)
-async def ayuda(ctx, *args):
+async def help(ctx, *args):
     if not args:
         embed = unvailable(user=ctx.message.author.id)
     await ctx.send(embed=embed)
+
+@bot.command(name=buscar_wallet)
+async def busqueda(ctx, wallet):
+    channel = bot.get_channel(854744124938387457)
+    async for msg in ctx.channel.history(limit=None):
+        if wallet in msg.content and not msg.content.startswith('$buscar-wallet '):
+            embed = discord.Embed(
+                title='USUARIO TURBIO',
+                description=f'{msg.author.name}',
+                colour=discord.Color.red()
+            )
+            embed.add_field(name='ID del user:', value=f'{msg.author.id}', inline=False)
+            await channel.send(embed=embed)
 
 # EJECUCIÓN DEL BOT
 bot.run(config('TOKEN'))
