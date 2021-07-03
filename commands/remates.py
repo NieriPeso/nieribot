@@ -68,7 +68,7 @@ def crear_remate(message):
             try:
                 img = message.attachments[0].url
             except:
-                img = None
+                img = 'https://cdn.discordapp.com/attachments/860489778646876170/860972003922149396/image0.png'
 
             # CONVERTIR PRECIO A NUMERO ENTERO
             try:
