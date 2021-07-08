@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import get_date
+from utils.time import get_date, get_date_to_close
 
 # REMATES
 
@@ -15,7 +15,18 @@ def alargar_remate(id):
     pass
 
 def close_remate(id):
-    pass
+    new_date = get_date_to_close().strftime('%d/%m/%y %H:%M')
+    client = MongoClient(config('CONN_STR'))
+    coll = client['nieribot']['remates']
+    coll.update_one(
+        {'ID':id},
+        {'$set': {
+            'activo':True,
+            'cierre':new_date
+            }
+        }
+    )
+    client.close()
 
 def terminar_remate(id):
     client = MongoClient(config('CONN_STR'))

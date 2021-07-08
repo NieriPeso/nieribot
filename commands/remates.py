@@ -1,5 +1,5 @@
 import discord, pytz
-from . import db, edit_embed
+from . import db, edit_embed, validation
 
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -88,7 +88,8 @@ def crear_remate(message):
                 'activo': True,
                 'cierre': final.replace('\n', ''),
                 'postores': [],
-                'foto': img
+                'foto': img,
+                'deletedAt': None
             }
 
             db.agregar_remate(save)
@@ -253,3 +254,27 @@ def pujar_remate(message):
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
         return embed, True, None, None
+
+def borrar_remate(ctx, id, motive):
+    if validation.validate_permissions(ctx):
+        db.close_remate(id)
+        data = db.obtener_datos(id)
+        embed = discord.Embed(
+            tittle='REMATE BORRADO',
+            discord=f'<@{ctx.message.author.id}> ha borrado el remate.',
+            color=discord.Color.green()
+        )
+        embed.add_field(name='Id del remate:', value=f'{data["ID"]}', inline=False)
+        embed.add_field(name='Rematador:', value=f'{data["rematador"]}', inline=False)
+        if motive != None:
+            embed.add_field(name='Motivo de cierre:', value=f'{motive}', inline=False)
+        else:
+            embed.add_field(name='Motivo de cierre:', value='No hubo especificación del motivo.', inline=False)
+        return embed
+    else:
+        embed = discord.Embed(
+            tittle='ERROR DE PERMISOS',
+            description=f'<@{ctx.message.author.id}>, parece que no tienes permisos para cerrar remates.',
+            color=discord.Color.red()
+        )
+        return embed

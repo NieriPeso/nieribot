@@ -3,6 +3,12 @@ import pytz
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
+def get_date_to_close():
+    now = get_date()
+    day_added = timedelta(minutes=1)
+    date = now + day_added
+    return date.strftime('%d/%m/%Y %H:%M')
+
 def get_date():
     now = datetime.now(tz=tz)
     now = datetime(day=now.day,month=now.month,year=now.year,hour=now.hour,minute=now.minute)

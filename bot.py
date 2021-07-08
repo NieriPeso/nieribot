@@ -4,10 +4,10 @@ from decouple import config
 from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
-from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate, close_remate
+from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
 from commands.help import *
 from utils.time import get_date_future, end
-from commands.validation import validate_channel, validate_permissions
+from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
@@ -190,8 +190,8 @@ async def edit(ctx):
 
 @bot.command(name=cerrar_remate)
 async def close(ctx, id, motive=None):
-    if validate_permissions(ctx):
-        embed, err = close_remate(id)
+    embed = remates.borrar_remate(ctx, id, motive)
+    await ctx.channel.send(embed=embed)
 
 @bot.command(name=blacklist)
 async def mark_user(ctx, user_id):
@@ -210,7 +210,6 @@ async def send_data(ctx):
         'user':ctx.message.author.name,
         'photo':str(ctx.message.author.avatar_url)
     }
- 
 
     req = requests.post('https://nieripeso-dev.vercel.app/api/signIn', headers=headers, data=body)
     data = req.json()
