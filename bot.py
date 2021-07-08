@@ -4,10 +4,11 @@ from decouple import config
 from utils.constants import *
 from utils.messages import *
 from commands import remates, nuevonieri, chat
-from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
+from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate, obtener_datos
 from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
+from commands.get_channel_id import get_channel_id
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -82,7 +83,7 @@ async def on_message(message):
     # GUARDAR EL ID EN DB Y PODER EDITAR/BORRAR EL MENSAJE
     # CUANDO SE REQUIERA
     if message.author == bot.user:
-        if validate_channel(message.channel.id, key='cartelera-remate'):
+        if validate_channel(message.channel.id, key='cartelera-remates'):
             guardar_id_mensaje(msg_id=message.id)
         else:
             return
@@ -135,9 +136,7 @@ async def pujar_rem(ctx, *args):
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
-                channel = bot.get_channel(854807245509492808)
-                msg = await channel.fetch_message(id_msg)
-                await chat.editar_msg_remate(message=msg, embed=edit)
+                await chat.update_message(id_msg, edit)
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(embed=embed)
@@ -173,6 +172,20 @@ async def crear(ctx, *args):
 
 @bot.command(name=agregar_foto)
 async def add_picture(ctx, id):
+    if validate_channel(ctx.channel.id, key='remate-valorate'):
+        embed, err = remates.agregar_foto(message=ctx.message, id=id)
+        if not err:
+            channel = bot.get_channel(get_channel_id('cartelera-remate'))
+            await chat.update_message(id, embed, channel)
+        else:
+            await ctx.channel.send(embed)
+
+@bot.command(name=editar_remate)
+async def edit(ctx):
+    pass
+
+@bot.command(name=blacklist)
+async def mark_user(ctx, user_id):
     pass
 
 @bot.command(name=ir_al_super)
@@ -190,7 +203,7 @@ async def send_data(ctx):
     }
 
 
-    req = requests.post('https://nieripesos-dev.vercel.app/api/signIn', headers=headers, data=body)
+    req = requests.post('https://nieripeso-dev.vercel.app/api/signIn', headers=headers, data=body)
     data = req.json()
     
     embed = discord.Embed(

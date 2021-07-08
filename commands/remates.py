@@ -1,6 +1,5 @@
 import discord, pytz
-from . import db
-from datetime import datetime
+from . import db, edit_embed
 
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -109,11 +108,11 @@ def crear_remate(message):
             embed.add_field(name='Rematador:', value=f'<@{message.author.id}>', inline=False)
             embed.add_field(name='Precio base:', value=f'{base}', inline=False)
             embed.add_field(name='Fecha de finalización:', value=f'{final}', inline=False)
-            if not img == None:
-                embed.set_image(url=img)
-            else:
-                embed.add_field(
-                    name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
+            # if not img == None:
+            embed.set_image(url=img)
+            # else:
+            #     embed.add_field(
+            #         name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
             return embed, 0, confirm
 
     except:
@@ -124,6 +123,32 @@ def crear_remate(message):
         )
         return embed, 1, None
 
+def agregar_foto(message, id):
+    data = db.obtener_datos(id)
+    if data != None and message.author.id == data['id_rematador']:
+        try:
+            img = message.attachments[0].url
+        except:
+            embed = discord.Embed(
+                title='ERROR',
+                description='Parece que no subiste foto',
+                color=discord.Color.red()
+            )
+            return embed
+        db.add_picture(id, img=img)
+        embed = discord.Embed(
+            title='FOTO AGREGADA',
+            description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
+            color=discord.Color.green()
+        )
+        return embed, False
+    else:
+        embed = discord.Embed(
+            title='ERROR',
+            description=f'Parece que el remate con id {id} no existe o no es de tu propiedad <@{message.author.id}>',
+            color=discord.Color.red()
+        )
+        return embed, True
 
 def pujar_remate(message):
     try:
@@ -198,28 +223,7 @@ def pujar_remate(message):
             temp = db.obtener_datos(id=id_rem_apostar)
             postores = temp["postores"]
 
-            edit = discord.Embed(
-                title=f'{temp["nombre_rem"]}',
-                description=f'{temp["descripcion_rem"]}',
-                colour=discord.Color.green()
-            )
-            edit.add_field(name='ID del remate:', value=f'{temp["ID"]}', inline=False)
-            edit.add_field(name='Rematador:', value=f'<@{temp["id_rematador"]}>', inline=False)
-            edit.add_field(name='Precio base:', value=f'{temp["base"]}', inline=False)
-            edit.add_field(name='Fecha de finalización:', value=f'{temp["cierre"]}', inline=False)
-            if temp["foto"] != None:
-                edit.set_image(url=temp["foto"])
-            else:
-                edit.add_field(name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-            text = ''
-            if len(postores) > 5:
-                for x in range(len(postores)-5, len(postores)):
-                    text += f'{postores[x][0]}\t' + '-\t' + f'<@{postores[x][3]}>\t' + '-\t' + f'<:nieripeso:852661603321249824>{str(postores[x][2])}' + '\n'
-                edit.add_field(name='Últimos 5 postores:', value=text, inline=False)
-            else:
-                for p in postores:
-                    text += f'{p[0]}\t' + '-\t' + f'<@{p[3]}>' + '-\t' + f'<:nieripeso:852661603321249824>{str(p[2])}' + '\n'
-                edit.add_field(name='Postores:', value=text, inline=False)
+            edit = edit_embed.edit_embed(data=temp)
 
             embed = discord.Embed(
                 title=f'{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.',

@@ -72,6 +72,16 @@ def guardar_id_mensaje(msg_id):
     )
     client.close()
 
+def add_picture(id, img):
+    client = MongoClient(config('CONN_STR'))
+    db = client['nieribot']
+    coll = db['remates']
+    coll.update_one(
+        { 'ID' : id },
+        { 'foto' : img }
+    )
+    client.close()
+
 # ========================================================================
 
 
