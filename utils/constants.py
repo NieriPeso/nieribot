@@ -10,3 +10,9 @@ nieripeso = 'nieripeso'
 ayuda = 'ayuda'
 ir_al_super = 'ir-al-super'
 buscar_wallet = 'buscar-wallet'
+editar_remate = 'editar-remate'
+blacklist = 'blacklist'
+channels = {
+    'remate-valorate':849410645513207828,
+    'cartelera-remates':854807245509492808
+}
