@@ -201,7 +201,7 @@ async def send_data(ctx):
         'user':ctx.message.author.name,
         'photo':str(ctx.message.author.avatar_url)
     }
-
+ 
 
     req = requests.post('https://nieripeso-dev.vercel.app/api/signIn', headers=headers, data=body)
     data = req.json()
