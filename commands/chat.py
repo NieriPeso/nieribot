@@ -15,9 +15,5 @@ async def limpiar_chat(ctx, arg):
         )
         await ctx.channel.send(embed=embed)
 
-async def update_message(id, embed, channel):
-    msg = await channel.fetch_message(id)
-    await msg.edit(embed)
-
 async def editar_msg_remate(message, embed):
     await message.edit(embed=embed)

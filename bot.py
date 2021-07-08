@@ -3,11 +3,11 @@ from discord.ext import commands
 from decouple import config
 from utils.constants import *
 from utils.messages import *
-from commands import remates, nuevonieri, chat, edit_embed
-from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
+from commands import remates, nuevonieri, chat
+from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate, close_remate
 from commands.help import *
 from utils.time import get_date_future, end
-from commands.validation import validate_channel
+from commands.validation import validate_channel, validate_permissions
 from commands.get_channel_id import get_channel_id
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
@@ -118,7 +118,7 @@ async def puja_rem(ctx, *args):
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
-                channel = bot.get_channel(854807245509492808)
+                channel = bot.get_channel(get_channel_id('cartelera-remates'))
                 msg = await channel.fetch_message(id_msg)
                 await chat.editar_msg_remate(message=msg, embed=edit)
                 await ctx.send(embed=embed)
@@ -136,7 +136,9 @@ async def pujar_rem(ctx, *args):
         if args:
             embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
             if not error:
-                await chat.update_message(id_msg, edit)
+                channel = bot.get_channel(get_channel_id('cartelera-remates'))
+                msg = await channel.fetch_message(id_msg)
+                await chat.editar_msg_remate(message=msg, embed=edit)
                 await ctx.send(embed=embed)
             else:
                 await ctx.send(embed=embed)
@@ -173,10 +175,11 @@ async def crear(ctx, *args):
 @bot.command(name=agregar_foto)
 async def add_picture(ctx, id):
     if validate_channel(ctx.channel.id, key='remate-valorate'):
-        embed, err, edited = remates.agregar_foto(message=ctx.message, id=id)
+        embed, err, edited, id_msg = remates.agregar_foto(message=ctx.message, id=id)
         if not err:
-            channel = bot.get_channel(get_channel_id('cartelera-remate'))
-            await chat.update_message(id, edited, channel)
+            channel = bot.get_channel(get_channel_id('cartelera-remates'))
+            msg = await channel.fetch_message(id_msg)
+            await chat.editar_msg_remate(message=msg, embed=edited)
             await ctx.channel.send(embed=embed)
         else:
             await ctx.channel.send(embed=embed)
@@ -184,6 +187,11 @@ async def add_picture(ctx, id):
 @bot.command(name=editar_remate)
 async def edit(ctx):
     pass
+
+@bot.command(name=cerrar_remate)
+async def close(ctx, id, motive=None):
+    if validate_permissions(ctx):
+        embed, err = close_remate(id)
 
 @bot.command(name=blacklist)
 async def mark_user(ctx, user_id):

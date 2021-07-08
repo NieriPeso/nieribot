@@ -11,6 +11,7 @@ ayuda = 'ayuda'
 ir_al_super = 'ir-al-super'
 buscar_wallet = 'buscar-wallet'
 editar_remate = 'editar-remate'
+cerrar_remate = 'cerrar-remate'
 blacklist = 'blacklist'
 channels = {
     'remate-valorate':849410645513207828,
