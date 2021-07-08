@@ -125,7 +125,7 @@ def crear_remate(message):
 
 def agregar_foto(message, id):
     data = db.obtener_datos(id)
-    if data != None and message.author.id == data['id_rematador']:
+    if data != None and data['activo'] == True and message.author.id == data['id_rematador']:
         try:
             img = message.attachments[0].url
         except:
@@ -134,22 +134,23 @@ def agregar_foto(message, id):
                 description='Parece que no subiste foto',
                 color=discord.Color.red()
             )
-            return embed
+            return embed, True, None, None
         db.add_picture(id, img=img)
         embed = discord.Embed(
             title='FOTO AGREGADA',
             description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
             color=discord.Color.green()
         )
-        edit = edit_embed.edit_embed(db.obtener_datos(id))
-        return embed, False, edit
+        data=db.obtener_datos(id)
+        edit = edit_embed.edit_embed(data = data)
+        return embed, False, edit, data['message_id']
     else:
         embed = discord.Embed(
             title='ERROR',
-            description=f'Parece que el remate con id {id} no existe o no es de tu propiedad <@{message.author.id}>',
+            description=f'Parece que el remate con id {id} no existe, ya cerró o no es de tu propiedad <@{message.author.id}>',
             color=discord.Color.red()
         )
-        return embed, True, None
+        return embed, True, None, None
 
 def pujar_remate(message):
     try:

@@ -14,6 +14,9 @@ from utils.time import get_date
 def alargar_remate(id):
     pass
 
+def close_remate(id):
+    pass
+
 def terminar_remate(id):
     client = MongoClient(config('CONN_STR'))
     coll = client['nieribot']['remates']
@@ -33,7 +36,7 @@ def obtener_datos(id):
     client = MongoClient(config('CONN_STR'))
     db = client['nieribot']
     coll = db['remates']
-    datos = coll.find_one({'ID': id})
+    datos = coll.find_one({'ID': int(id)})
     return datos
 
 def obtener_remates_on():
@@ -73,12 +76,13 @@ def guardar_id_mensaje(msg_id):
     client.close()
 
 def add_picture(id, img):
+    print(id,'\n',img)
     client = MongoClient(config('CONN_STR'))
     db = client['nieribot']
     coll = db['remates']
     coll.update_one(
-        { 'ID' : id },
-        { 'foto' : img }
+        {'ID' : int(id)},
+        {'$set': {'foto': str(img)}}
     )
     client.close()
 
