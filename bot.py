@@ -3,8 +3,8 @@ from discord.ext import commands
 from decouple import config
 from utils.constants import *
 from utils.messages import *
-from commands import remates, nuevonieri, chat
-from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate, obtener_datos
+from commands import remates, nuevonieri, chat, edit_embed
+from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
 from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
@@ -173,12 +173,13 @@ async def crear(ctx, *args):
 @bot.command(name=agregar_foto)
 async def add_picture(ctx, id):
     if validate_channel(ctx.channel.id, key='remate-valorate'):
-        embed, err = remates.agregar_foto(message=ctx.message, id=id)
+        embed, err, edited = remates.agregar_foto(message=ctx.message, id=id)
         if not err:
             channel = bot.get_channel(get_channel_id('cartelera-remate'))
-            await chat.update_message(id, embed, channel)
+            await chat.update_message(id, edited, channel)
+            await ctx.channel.send(embed=embed)
         else:
-            await ctx.channel.send(embed)
+            await ctx.channel.send(embed=embed)
 
 @bot.command(name=editar_remate)
 async def edit(ctx):

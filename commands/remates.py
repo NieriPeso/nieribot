@@ -141,14 +141,15 @@ def agregar_foto(message, id):
             description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
             color=discord.Color.green()
         )
-        return embed, False
+        edit = edit_embed.edit_embed(db.obtener_datos(id))
+        return embed, False, edit
     else:
         embed = discord.Embed(
             title='ERROR',
             description=f'Parece que el remate con id {id} no existe o no es de tu propiedad <@{message.author.id}>',
             color=discord.Color.red()
         )
-        return embed, True
+        return embed, True, None
 
 def pujar_remate(message):
     try:
