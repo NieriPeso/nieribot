@@ -3,8 +3,8 @@ from discord.ext import commands
 from decouple import config
 from utils.constants import *
 from utils.messages import *
-from commands import remates, nuevonieri, chat
-from commands.db import guardar_id_mensaje, obtener_remates_on, terminar_remate
+from commands import cierre_cartelera, remates, nuevonieri, chat
+from commands.db import guardar_id_mensaje, obtener_datos, obtener_remates_on, terminar_remate
 from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
@@ -41,42 +41,10 @@ async def on_message(message):
     remates_on = obtener_remates_on()
     for remate in remates_on:
         if end(remate['cierre']):
-            terminar_remate(id=remate['ID'])
-            # OBTENER CANAL DE CARTELERA Y EL MSG DEL REMATE FINALIZADO
-            cartelera = bot.get_channel(id=854807245509492808)
-            msg = await cartelera.fetch_message(remate['message_id'])
-            history_channel = bot.get_channel(id=858860323850551337)
-            embed = discord.Embed(
-                title=f'{remate["nombre_rem"]}',
-                description=f'{remate["descripcion_rem"]}',
-                colour=discord.Color.dark_green()
-            )
-            embed.add_field(name='Rematador:', value=f'<@{remate["id_rematador"]}>', inline=False)
-            embed.add_field(name='Precio base <:nieripeso:852661603321249824>:', value=f'{remate["base"]}', inline=False)
-            if len(remate["postores"]) > 0:
-                embed.add_field(name='Ganador:', value=f'<@{remate["postores"][-1][3]}>', inline=False)
-                embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{remate["postores"][-1][2]}', inline=False)
-            else:
-                embed.add_field(name='Lo siento', value='Parece que nadie realizó una puja en tu remate', inline=False)
-            if remate['foto'] != None:
-                embed.set_image(url=remate['foto'])
-            embed.set_footer(text='REMATE CERRADO')
-            await history_channel.send(embed=embed)
-            await msg.delete()
-
-            # OBTENER CANAL DE REMATE-VALORATE PARA ENVÍAR AVISO
-            channel = bot.get_channel(id=849410645513207828)
-            emb = discord.Embed(
-                title='UN REMATE LLEGÓ A SU CIERRE',
-                description=f'Nombre: {remate["nombre_rem"]}\nID: {remate["ID"]}',
-                colour=discord.Color.gold()
-            )
-            emb.add_field(name='REMATADOR:', value=f'<@{remate["id_rematador"]}>', inline=False)
-            try:
-                emb.add_field(name='GANADOR:', value=f'<@{remate["postores"][-1][3]}>', inline=False)
-            except:
-                emb.add_field(name='LO SIENTO', value='Parece que no hubo pujas en este remate', inline=False)
-            await channel.send(embed=emb)
+            cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
+            cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
+            remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
+            await cierre_cartelera.cierre(remate=remate, cartelera=cartelera, cartelera_cerrados=cartelera_cerrados, remate_valorate=remate_valorate)
 
     # LÓGICA PARA HACER QUE LOS MENSAJES DEL BOT NO SE ESCUCHEN
     # A MENOS QUE SEA EN EL CANAL DE CARTELERA-REMATES PARA PODER
@@ -158,7 +126,7 @@ async def crear(ctx, *args):
                 return
 
             if error == 0:
-                channel = bot.get_channel(854807245509492808)
+                channel = bot.get_channel(get_channel_id('cartelera-remates'))
                 await channel.send(embed=embed)
                 await ctx.message.channel.send(embed=confirm)
 
@@ -167,31 +135,32 @@ async def crear(ctx, *args):
             
             elif error == 2:
                 await ctx.channel.send(embed=embed)
-                await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/22 16:20')
+                await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/2022 16:20')
 
         else:
             await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
 
-@bot.command(name=agregar_foto)
-async def add_picture(ctx, id):
-    if validate_channel(ctx.channel.id, key='remate-valorate'):
-        embed, err, edited, id_msg = remates.agregar_foto(message=ctx.message, id=id)
-        if not err:
-            channel = bot.get_channel(get_channel_id('cartelera-remates'))
-            msg = await channel.fetch_message(id_msg)
-            await chat.editar_msg_remate(message=msg, embed=edited)
-            await ctx.channel.send(embed=embed)
-        else:
-            await ctx.channel.send(embed=embed)
+# @bot.command(name=agregar_foto)
+# async def add_picture(ctx, id):
+#     if validate_channel(ctx.channel.id, key='remate-valorate'):
+#         embed, err, edited, id_msg = remates.agregar_foto(message=ctx.message, id=id)
+#         if not err:
+#             channel = bot.get_channel(get_channel_id('cartelera-remates'))
+#             msg = await channel.fetch_message(id_msg)
+#             await msg.edit(embed=edited)
+#             await ctx.channel.send(embed=embed)
+#         else:
+#             await ctx.channel.send(embed=embed)
 
 @bot.command(name=editar_remate)
 async def edit(ctx):
     pass
 
 @bot.command(name=cerrar_remate)
-async def close(ctx, id, motive=None):
-    embed = remates.borrar_remate(ctx, id, motive)
-    await ctx.channel.send(embed=embed)
+async def cierre(ctx, id, motive=None):
+    if validate_channel(ctx.channel.id, key='remate-valorate'):
+        embed = remates.cerrar_remate(ctx, id, motive)
+        await ctx.channel.send(embed=embed)
 
 @bot.command(name=blacklist)
 async def mark_user(ctx, user_id):

@@ -15,5 +15,6 @@ cerrar_remate = 'cerrar-remate'
 blacklist = 'blacklist'
 channels = {
     'remate-valorate':849410645513207828,
-    'cartelera-remates':854807245509492808
+    'cartelera-remates':854807245509492808,
+    'cartelera-cerrados':858860323850551337
 }

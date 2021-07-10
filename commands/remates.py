@@ -1,3 +1,4 @@
+from commands import est_remate_db
 import discord, pytz
 from . import db, edit_embed, validation
 
@@ -6,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import end, past_date, get_date
+from utils.time import end, get_date_to_close, past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -67,7 +68,12 @@ def crear_remate(message):
             try:
                 img = message.attachments[0].url
             except:
-                img = 'https://cdn.discordapp.com/attachments/860489778646876170/860972003922149396/image0.png'
+                embed = discord.Embed(
+                    title='ERROR CON FOTO',
+                    description='Es obligatorio al crear un remate subir una foto junto al mensaje',
+                    colour=discord.Color.orange()
+                )
+                return embed, 1, None
 
             # CONVERTIR PRECIO A NUMERO ENTERO
             try:
@@ -76,21 +82,7 @@ def crear_remate(message):
                 base = 0
 
             # PERSISTENCIA EN MONGO DB
-            save = {
-                'ID': id_remate,
-                'message_id': 0,
-                'rematador': rematador,
-                'id_rematador': message.author.id,
-                'nombre_rem': remate_nombre,
-                'descripcion_rem': remate_descripcion,
-                'base': base,
-                'comienzo': get_date().strftime('%d/%m/%y %H:%M'),
-                'activo': True,
-                'cierre': final.replace('\n', ''),
-                'postores': [],
-                'foto': img,
-                'deletedAt': None
-            }
+            save = est_remate_db.estructura(id_remate, rematador, message.author.id, remate_nombre, remate_descripcion, base, get_date().strftime('%d/%m/%y %H:%M'), final, img)
 
             db.agregar_remate(save)
 
@@ -123,35 +115,6 @@ def crear_remate(message):
             colour=discord.Color.red()
         )
         return embed, 1, None
-
-def agregar_foto(message, id):
-    data = db.obtener_datos(id)
-    if data != None and data['activo'] == True and message.author.id == data['id_rematador']:
-        try:
-            img = message.attachments[0].url
-        except:
-            embed = discord.Embed(
-                title='ERROR',
-                description='Parece que no subiste foto',
-                color=discord.Color.red()
-            )
-            return embed, True, None, None
-        db.add_picture(id, img=img)
-        embed = discord.Embed(
-            title='FOTO AGREGADA',
-            description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
-            color=discord.Color.green()
-        )
-        data=db.obtener_datos(id)
-        edit = edit_embed.edit_embed(data = data)
-        return embed, False, edit, data['message_id']
-    else:
-        embed = discord.Embed(
-            title='ERROR',
-            description=f'Parece que el remate con id {id} no existe, ya cerró o no es de tu propiedad <@{message.author.id}>',
-            color=discord.Color.red()
-        )
-        return embed, True, None, None
 
 def pujar_remate(message):
     try:
@@ -255,9 +218,11 @@ def pujar_remate(message):
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
         return embed, True, None, None
 
-def borrar_remate(ctx, id, motive):
+def cerrar_remate(ctx, id, motive):
     if validation.validate_permissions(ctx):
-        db.close_remate(id)
+        _id, ID, msg_id, rematador, id_rem, nombre_rem, desc_rem, base, comienzo, activo, postores, foto = est_remate_db.extraer_datos(db.obtener_datos(id))
+        doc = est_remate_db.estructura(ID, rematador, id_rem, nombre_rem, desc_rem, base, comienzo, get_date().strftime('%d/%m/%y %H:%M'), foto, activo, get_date(), msg_id, postores)
+        db.close_remate(id, doc, _id)
         data = db.obtener_datos(id)
         embed = discord.Embed(
             tittle='REMATE BORRADO',
@@ -278,3 +243,32 @@ def borrar_remate(ctx, id, motive):
             color=discord.Color.red()
         )
         return embed
+
+# def agregar_foto(message, id):
+#     data = db.obtener_datos(id)
+#     if data != None and data['activo'] == True and message.author.id == data['id_rematador']:
+#         try:
+#             img = message.attachments[0].url
+#         except:
+#             embed = discord.Embed(
+#                 title='ERROR',
+#                 description='Parece que no subiste foto',
+#                 color=discord.Color.red()
+#             )
+#             return embed, True, None, None
+#         db.add_picture(id, img=img)
+#         embed = discord.Embed(
+#             title='FOTO AGREGADA',
+#             description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
+#             color=discord.Color.green()
+#         )
+#         data=db.obtener_datos(id)
+#         edit = edit_embed.edit_embed(data = data)
+#         return embed, False, edit, data['message_id']
+#     else:
+#         embed = discord.Embed(
+#             title='ERROR',
+#             description=f'Parece que el remate con id {id} no existe, ya cerró o no es de tu propiedad <@{message.author.id}>',
+#             color=discord.Color.red()
+#         )
+#         return embed, True, None, None

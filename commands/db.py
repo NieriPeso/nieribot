@@ -7,25 +7,20 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import get_date, get_date_to_close
-
 # REMATES
 
 def alargar_remate(id):
     pass
 
-def close_remate(id):
-    new_date = get_date_to_close().strftime('%d/%m/%y %H:%M')
+def close_remate(id, doc, _id):
     client = MongoClient(config('CONN_STR'))
     coll = client['nieribot']['remates']
-    coll.update_one(
+    coll.replace_one(
         {'ID':id},
-        {'$set': {
-            'activo':True,
-            'cierre':new_date
-            }
-        }
+        doc,
+        True
     )
+    coll.delete_one({'_id':_id})
     client.close()
 
 def terminar_remate(id):
@@ -86,16 +81,16 @@ def guardar_id_mensaje(msg_id):
     )
     client.close()
 
-def add_picture(id, img):
-    print(id,'\n',img)
-    client = MongoClient(config('CONN_STR'))
-    db = client['nieribot']
-    coll = db['remates']
-    coll.update_one(
-        {'ID' : int(id)},
-        {'$set': {'foto': str(img)}}
-    )
-    client.close()
+# def add_picture(id, img):
+#     print(id,'\n',img)
+#     client = MongoClient(config('CONN_STR'))
+#     db = client['nieribot']
+#     coll = db['remates']
+#     coll.update_one(
+#         {'ID' : int(id)},
+#         {'$set': {'foto': str(img)}}
+#     )
+#     client.close()
 
 # ========================================================================
 
