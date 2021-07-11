@@ -180,12 +180,12 @@ async def send_data(ctx):
         'photo':str(ctx.message.author.avatar_url)
     }
 
-    req = requests.post('https://nieripeso-dev.vercel.app/api/signIn', headers=headers, data=body)
+    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, data=body)
     data = req.json()
     
     embed = discord.Embed(
         title=f'{ctx.message.author.name}',
-        description=f'[ABRIR EL SUPER](https://nieripeso-dev.vercel.app/marketplace?token={data["token"]})',
+        description=f'[ABRIR EL SUPER](https://mercado.nieri.uy/?token={data["token"]})',
         colour=discord.Color.green()
     )
 
