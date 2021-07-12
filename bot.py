@@ -169,7 +169,7 @@ async def mark_user(ctx, user_id):
 @bot.command(name=ir_al_super)
 async def send_data(ctx):
     import requests
-
+    
     headers = {
         "x-api-key":'DAJEU@hK4JSHD8d19238sdhdshahd2198172@d9sad09ad128973'
     }
@@ -177,7 +177,8 @@ async def send_data(ctx):
     body = {
         'id':ctx.message.author.id,
         'user':ctx.message.author.name,
-        'photo':str(ctx.message.author.avatar_url)
+        'photo':str(ctx.message.author.avatar_url),
+        'roles': [role.name.lower() for role in ctx.message.author.roles]
     }
 
     req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, data=body)
