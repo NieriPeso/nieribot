@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import end, get_date_to_close, past_date, get_date
+from utils.time import convert_to_datetime, end, get_new_close, last_five_minutes, past_date, get_date
 
 tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
@@ -46,7 +46,7 @@ def crear_remate(message):
                 return embed, 1, None
 
             if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][16] == ' ' and datos[4][19] == ':':
-                final = str(datos[4][6:])
+                final = str(datos[4][6:]).replace('\n', '')
                 if past_date(final):
                     embed = discord.Embed(
                         title='ERROR EN FECHA',
@@ -82,7 +82,17 @@ def crear_remate(message):
                 base = 0
 
             # PERSISTENCIA EN MONGO DB
-            save = est_remate_db.estructura(id_remate, rematador, message.author.id, remate_nombre, remate_descripcion, base, get_date().strftime('%d/%m/%y %H:%M'), final, img)
+            save = est_remate_db.estructura(
+                id_remate,
+                rematador,
+                message.author.id,
+                remate_nombre,
+                remate_descripcion,
+                base,
+                get_date(),
+                convert_to_datetime(final),
+                img
+            )
 
             db.agregar_remate(save)
 
@@ -148,10 +158,9 @@ def pujar_remate(message):
             )
             return embed, True, None, None
 
-        postores = temp["postores"]
+        postores = temp["offers"]
 
-        if end(temp['cierre']):
-            db.terminar_remate(id=id_rem_apostar)
+        if end(temp['closeAt']) or not temp['active']:
             embed = discord.Embed(
                     title='ERROR DE TIEMPO',
                     description=f'<@{message.author.id}>, esta puja ya ha terminado.',
@@ -162,7 +171,7 @@ def pujar_remate(message):
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
             except:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
-                embed.add_field(name='Nota:', value=f'Lo siento <@{temp["id_rematador"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["nombre_rem"]}**', inline=False)
+                embed.add_field(name='Nota:', value=f'Lo siento <@{temp["ownerId"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["name"]}**', inline=False)
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
@@ -174,9 +183,14 @@ def pujar_remate(message):
             )
             return embed, True, None, None
 
-        puja = [get_date().strftime('%d/%m/%y %H:%M'), message.author.name, cantidad, message.author.id]
+        puja = {
+            'createdAt': get_date(),
+            'bidderName': message.author.name,
+            'amount': cantidad,
+            'bidderId': message.author.id
+        }
 
-        if temp["rematador"] == message.author.name:
+        if temp["ownerName"] == message.author.name:
             embed = discord.Embed(
                 title='ERROR EN PUJA',
                 description=f'{message.author.name}, no puedes pujar en tu propio remate.',
@@ -184,29 +198,53 @@ def pujar_remate(message):
             )
             return embed, True, None, None
 
-        if postores == [] and cantidad >= temp['base'] or postores[-1][2] < cantidad:
+        if postores == [] and cantidad >= temp['baseAmount'] or postores[-1]['amount'] < cantidad:
+            if postores == [] and cantidad == 0:
+                embed = discord.Embed(
+                    title='ERROR EN CANTIDAD DE <:nieripeso:852661603321249824>',
+                    description=f'{message.author.name}, la **cantidad minima** para pujar es de: <:nieripeso:852661603321249824> **1**.',
+                    colour=discord.Color.orange()
+                )
+                return embed, True, None, None
             db.guardar_puja(id=id_rem_apostar, puja=puja)
             temp = db.obtener_datos(id=id_rem_apostar)
-            postores = temp["postores"]
-
-            edit = edit_embed.edit_embed(data=temp)
+            postores = temp["offers"]
 
             embed = discord.Embed(
                 title=f'{message.author.name} realizó una puja por <:nieripeso:852661603321249824> {cantidad}.',
-                description=f'Este remate fue abierto por <@{temp["id_rematador"]}>',
+                description=f'Este remate fue abierto por <@{temp["ownerId"]}>',
                 colour=discord.Color.green()
             )
-            embed.add_field(name='Pujaste a:', value=f'{temp["nombre_rem"]}', inline=False)
-            embed.add_field(name='Post de remate', value=f'[Remate en cartelera](https://discord.com/channels/847456853465497601/854807245509492808/{temp["message_id"]})', inline=False)
-            return embed, False, edit, temp["message_id"]
+            embed.add_field(name='Pujaste a:', value=f'{temp["name"]}', inline=False)
+            embed.add_field(name='Post de remate', value=f'[Remate en cartelera](https://discord.com/channels/847456853465497601/854807245509492808/{temp["messageId"]})', inline=False)
+
+            if last_five_minutes(puja['createdAt'], temp['closeAt']):
+                new_close = get_new_close(puja['createdAt'], temp['closeAt'])
+                temp['closeAt'] = new_close.strftime('%d/%m/%Y %H:%M')
+                embed.add_field(name='AVISO DE ULTIMOS 5 MINUTOS', value='Esta puja fué realizada dentro de los últimos 5 minutos.\nLo cual cambia la fecha de cierre agregando el tiempo\nnecesario para que continuen faltando 5 minutos', inline=False)
+                embed.add_field(name='NUEVO CIERRE', value=f'{temp["closeAt"]}')
+                db.alargar_remate(temp['id'], new_close)
+
+            edit = edit_embed.edit_embed(data=temp)
+
+            return embed, False, edit, temp["messageId"]
 
         else:
-            embed = discord.Embed(
-                title='ERROR EN CANTIDAD DE <:nieripeso:852661603321249824>',
-                description=f'{message.author.name}, tu puja no es mayor a la ultima puja o a la base.',
-                colour=discord.Color.red()
-            )
-            return embed, True, None, None
+            if len(postores) > 0:
+                embed = discord.Embed(
+                    title='ERROR EN CANTIDAD DE <:nieripeso:852661603321249824>',
+                    description=f'{message.author.name}, tu puja no es mayor a la ultima puja con: <:nieripeso:852661603321249824> {postores[-1]["amount"]}.',
+                    colour=discord.Color.red()
+                )
+                embed.add_field(name='CANTIDAD SUGERIDA PARA PUJAR', value=f'<:nieripeso:852661603321249824> {postores[-1]["amount"]+1}')
+                return embed, True, None, None
+            else:
+                embed = discord.Embed(
+                    title='ERROR EN CANTIDAD DE <:nieripeso:852661603321249824>',
+                    description=f'{message.author.name}, tu puja no es mayor a la base.',
+                    colour=discord.Color.red()
+                )
+                return embed, True, None, None
 
     except:
         embed = discord.Embed(
@@ -220,8 +258,21 @@ def pujar_remate(message):
 
 def cerrar_remate(ctx, id, motive):
     if validation.validate_permissions(ctx):
-        _id, ID, msg_id, rematador, id_rem, nombre_rem, desc_rem, base, comienzo, activo, postores, foto = est_remate_db.extraer_datos(db.obtener_datos(id))
-        doc = est_remate_db.estructura(ID, rematador, id_rem, nombre_rem, desc_rem, base, comienzo, get_date().strftime('%d/%m/%y %H:%M'), foto, activo, get_date(), msg_id, postores)
+        _id, ID, msg_id, rematador, id_rem, nombre_rem, desc_rem, base, postores, foto, comienzo = est_remate_db.extraer_datos(db.obtener_datos(id))
+        doc = est_remate_db.estructura(
+            id_remate=ID,
+            rematador=rematador,
+            id_rem=id_rem,
+            remate_nombre=nombre_rem,
+            remate_descripcion=desc_rem,
+            base=base,
+            comienzo=comienzo,
+            final=get_date(),
+            img=foto,
+            deletedAt=get_date(),
+            message_id=msg_id,
+            postores=postores
+            )
         db.close_remate(id, doc, _id)
         data = db.obtener_datos(id)
         embed = discord.Embed(
@@ -229,8 +280,8 @@ def cerrar_remate(ctx, id, motive):
             discord=f'<@{ctx.message.author.id}> ha borrado el remate.',
             color=discord.Color.green()
         )
-        embed.add_field(name='Id del remate:', value=f'{data["ID"]}', inline=False)
-        embed.add_field(name='Rematador:', value=f'{data["rematador"]}', inline=False)
+        embed.add_field(name='Id del remate:', value=f'{data["id"]}', inline=False)
+        embed.add_field(name='Rematador:', value=f'<@{data["ownerId"]}>', inline=False)
         if motive != None:
             embed.add_field(name='Motivo de cierre:', value=f'{motive}', inline=False)
         else:
@@ -243,32 +294,3 @@ def cerrar_remate(ctx, id, motive):
             color=discord.Color.red()
         )
         return embed
-
-# def agregar_foto(message, id):
-#     data = db.obtener_datos(id)
-#     if data != None and data['activo'] == True and message.author.id == data['id_rematador']:
-#         try:
-#             img = message.attachments[0].url
-#         except:
-#             embed = discord.Embed(
-#                 title='ERROR',
-#                 description='Parece que no subiste foto',
-#                 color=discord.Color.red()
-#             )
-#             return embed, True, None, None
-#         db.add_picture(id, img=img)
-#         embed = discord.Embed(
-#             title='FOTO AGREGADA',
-#             description=f'<@{message.author.id}>, tu foto se ha agregado correctamente.',
-#             color=discord.Color.green()
-#         )
-#         data=db.obtener_datos(id)
-#         edit = edit_embed.edit_embed(data = data)
-#         return embed, False, edit, data['message_id']
-#     else:
-#         embed = discord.Embed(
-#             title='ERROR',
-#             description=f'Parece que el remate con id {id} no existe, ya cerró o no es de tu propiedad <@{message.author.id}>',
-#             color=discord.Color.red()
-#         )
-#         return embed, True, None, None

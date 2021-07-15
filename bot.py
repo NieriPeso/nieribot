@@ -4,7 +4,7 @@ from decouple import config
 from utils.constants import *
 from utils.messages import *
 from commands import cierre_cartelera, remates, nuevonieri, chat
-from commands.db import guardar_id_mensaje, obtener_datos, obtener_remates_on, terminar_remate
+from commands.db import guardar_id_mensaje, obtener_remates_on
 from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
@@ -40,7 +40,7 @@ async def on_message(message):
     # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
     remates_on = obtener_remates_on()
     for remate in remates_on:
-        if end(remate['cierre']):
+        if end(remate['closeAt']):
             cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
             cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
             remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
@@ -140,18 +140,6 @@ async def crear(ctx, *args):
         else:
             await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
 
-# @bot.command(name=agregar_foto)
-# async def add_picture(ctx, id):
-#     if validate_channel(ctx.channel.id, key='remate-valorate'):
-#         embed, err, edited, id_msg = remates.agregar_foto(message=ctx.message, id=id)
-#         if not err:
-#             channel = bot.get_channel(get_channel_id('cartelera-remates'))
-#             msg = await channel.fetch_message(id_msg)
-#             await msg.edit(embed=edited)
-#             await ctx.channel.send(embed=embed)
-#         else:
-#             await ctx.channel.send(embed=embed)
-
 @bot.command(name=editar_remate)
 async def edit(ctx):
     pass
@@ -177,15 +165,16 @@ async def send_data(ctx):
     body = {
         'id':ctx.message.author.id,
         'user':ctx.message.author.name,
-        'photo':str(ctx.message.author.avatar_url)
+        'photo':str(ctx.message.author.avatar_url),
+        'roles': [role.name.lower() for role in ctx.message.author.roles]
     }
 
-    req = requests.post('https://nieripeso-dev.vercel.app/api/signIn', headers=headers, data=body)
+    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, data=body)
     data = req.json()
     
     embed = discord.Embed(
         title=f'{ctx.message.author.name}',
-        description=f'[ABRIR EL SUPER](https://nieripeso-dev.vercel.app/marketplace?token={data["token"]})',
+        description=f'[ABRIR EL SUPER](https://mercado.nieri.uy/?token={data["token"]})',
         colour=discord.Color.green()
     )
 
