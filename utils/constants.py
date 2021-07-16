@@ -13,6 +13,7 @@ buscar_wallet = 'buscar-wallet'
 editar_remate = 'editar-remate'
 cerrar_remate = 'cerrar-remate'
 blacklist = 'blacklist'
+cotizacion='cotizacion'
 channels = {
     'remate-valorate':849410645513207828,
     'cartelera-remates':854807245509492808,

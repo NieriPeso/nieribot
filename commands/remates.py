@@ -133,7 +133,7 @@ def pujar_remate(message):
         if not datos[1].startswith('id ') or not datos[2].startswith('ñ '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
-                description=f'{message.author.name}, introduciste mal el comando de puja.',
+                description=f'{message.author.name}, introdujiste mal el comando de puja.',
                 colour=discord.Color.orange()
             )
             embed.set_footer(text='EJEMPLO:')
