@@ -163,7 +163,7 @@ def pujar_remate(message):
         if end(temp['closeAt']) or not temp['active']:
             embed = discord.Embed(
                     title='ERROR DE TIEMPO',
-                    description=f'<@{message.author.id}>, esta puja ya ha terminado.',
+                    description=f'<@{message.author.id}>, este remate ya ha terminado.',
                     colour=discord.Color.orange()
                 )
             try:
