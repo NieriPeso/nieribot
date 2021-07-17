@@ -38,6 +38,7 @@ comparation = {
         'Playlist de el Doctor en #Ñeri-Lounge',
         'chasquis',
         'Bryans',
+        'minutas del BCU',
         'NIERIBOTS'
     ],
     # cryptocurrency_list
