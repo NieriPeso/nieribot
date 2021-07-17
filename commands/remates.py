@@ -133,7 +133,7 @@ def pujar_remate(message):
         if not datos[1].startswith('id ') or not datos[2].startswith('ñ '):
             embed = discord.Embed(
                 title='ERROR EN COMANDO',
-                description=f'{message.author.name}, introduciste mal el comando de puja.',
+                description=f'{message.author.name}, introdujiste mal el comando de puja.',
                 colour=discord.Color.orange()
             )
             embed.set_footer(text='EJEMPLO:')
@@ -163,7 +163,7 @@ def pujar_remate(message):
         if end(temp['closeAt']) or not temp['active']:
             embed = discord.Embed(
                     title='ERROR DE TIEMPO',
-                    description=f'<@{message.author.id}>, esta puja ya ha terminado.',
+                    description=f'<@{message.author.id}>, este remate ya ha terminado.',
                     colour=discord.Color.orange()
                 )
             try:
