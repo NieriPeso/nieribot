@@ -36,6 +36,8 @@ comparation = {
         'Viernes de noche',
         'Fernets con Coca',
         'Playlist de el Doctor en #Ñeri-Lounge',
+        'chasquis',
+        'Bryans',
         'NIERIBOTS'
     ],
     # cryptocurrency_list
@@ -56,6 +58,7 @@ comparation = {
         'vos vales más',
         'Qué es el valor realmente?',
         'Se cayó la base de datos, consultá de nuevo en unas décadas',
+        '1.000.000 de ñeris',
         'Mucho mejor que el URUBIT'
     ]
 }
