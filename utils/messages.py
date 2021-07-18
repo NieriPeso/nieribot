@@ -54,11 +54,5 @@ De esta manera logramos ver la Ñieri en la wallet
 La misma está debajo del ícono y el nombre de tu wallet, algo así como: (0x????…????).
 
 **5_** Para poder transferir Ñieri a otras personas debes pagar una pequeña cuota por la transacción, para eso debes tener un poco de BNB, la cryptomoneda de la blockchain BSC de la empresa Binance. Aparece por defecto cuando  conectamos nuestra wallet a la red BSC Mainnet.
-
-***Por último debes llenar un formulario para que te puedan llegar tus $ÑERIS y BNB***
-
-El formulario se encuentra en este link:
-
-https://docs.google.com/forms/d/e/1FAIpQLSc0QoStNmF7TEPIrE-izazBC3q_WSB6FsS0VeBFJFgARNUk8A/viewform?embedded=true%22%3E
     '''
 ]
