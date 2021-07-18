@@ -8,7 +8,10 @@ comparation = {
         'MXN $',
         'GPB €',
         'EUR £',
-        'RUB ₽'
+        'RUB ₽',
+        'BTC ₿',
+        'BNB',
+        'ETH Ξ'
     ],
     # value_list
     2 : [
@@ -39,16 +42,16 @@ comparation = {
         'chasquis',
         'Bryans',
         'minutas del BCU',
+        'Fideos',
+        'Tirabuzones',
+        'Mostacholes',
+        'tallarines',
+        'ñoquis',
+        'pastas italianas',
         'NIERIBOTS'
     ],
-    # cryptocurrency_list
-    3 : [
-        'BTC ₿',
-        'BNB',
-        'ETH Ξ'
-    ],
     # random phrases
-    4 : [
+    3 : [
         'Un ñeri vale lo que la com unidad desea que valga! -Theneydoc',
         'El valor del ñeri son los amigos que hiciste en el camino',
         'Lo que te diga tu corazon',
@@ -60,6 +63,8 @@ comparation = {
         'Qué es el valor realmente?',
         'Se cayó la base de datos, consultá de nuevo en unas décadas',
         '1.000.000 de ñeris',
+        'ni pa comprar fideos xd',
+        '0,000000001 ñermes',
         'Mucho mejor que el URUBIT'
     ]
 }
