@@ -184,14 +184,14 @@ async def send_data(ctx):
 # FUN COMMAND
 @bot.command(name=cotizacion)
 async def cotizar_nieri(ctx):
-    comparationID = random.randint(1, 4)
+    comparationID = random.randint(1, 3)
     price = random.randint(1, 999)
     embed = discord.Embed(
         tittle='COTIZACIÓN',
         description=f'Pedido por parte de: {ctx.message.author.name}',
         color=discord.Color.gold()
     )
-    if comparationID == 4:
+    if comparationID == 3:
         embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparation[comparationID][random.randrange(0, len(comparation[comparationID]))]}')
     elif comparationID == 2:
         embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {price} {comparation[comparationID][random.randrange(0, len(comparation[comparationID]))]}')
