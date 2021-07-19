@@ -141,10 +141,6 @@ async def crear(ctx, *args):
         else:
             await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
 
-@bot.command(name=editar_remate)
-async def edit(ctx):
-    pass
-
 @bot.command(name=cerrar_remate)
 async def cierre(ctx, id, motive=None):
     if validate_channel(ctx.channel.id, key='remate-valorate'):
