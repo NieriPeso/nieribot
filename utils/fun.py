@@ -29,6 +29,7 @@ comparation = {
         'autos usados',
         'autos nuevos',
         'huevos',
+        'huevos podridos',
         'botellas de agua',
         'desmorrugadores',
         'pipas de agua',
@@ -48,7 +49,17 @@ comparation = {
         'tallarines',
         'ñoquis',
         'pastas italianas',
-        'NIERIBOTS'
+        'abrazos',
+        'momentos inolvidables',
+        'aburridos pesos',
+        'NIERIBOTS',
+        'recargas de garrafa de 13',
+        'vueltas al sol',
+        'tickets del parque rodo',
+        'litros de agua',
+        'fainás de orilla',
+        'fainás gruesos',
+        'fainás de queso'
     ],
     # random phrases
     3 : [
@@ -65,6 +76,21 @@ comparation = {
         '1.000.000 de ñeris',
         'ni pa comprar fideos xd',
         '0,000000001 ñermes',
-        'Mucho mejor que el URUBIT'
+        'Mucho mejor que el URUBIT',
+        '100 LTS de nafta',
+        'una media sin su par',
+        'error, token no encontrado',
+        'preguntale a Yisus el Inmortal(divisas), es nuestro experto en divisas',
+        '42!',
+        '3.1415926535897932384626433832795028841971693993751058209749445',
+        'Preguntame devuelta y capáz que te respondo',
+        'AYUDA ME TIENEN SECUESTRADO PROGRAMANDO ESTE BOT',
+        'No se xd',
+        'Depende quien compre y quien venda',
+        'No es legal pero no esta prohibido - Washington Ribeiro, Viceprecidente del BCU',
+        'Uno en relacion a si mismo',
+        'El canto de las aves, un atardecer, el cielo estrellado',
+        '1/450000 termos Stanley',
+        '420 cigarrillos de cannabis'
     ]
 }
