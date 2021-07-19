@@ -1,5 +1,5 @@
 from commands import est_remate_db
-import discord, pytz
+import discord
 from . import db, edit_embed, validation
 
 import os, sys
@@ -8,8 +8,6 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
 from utils.time import convert_to_datetime, end, get_new_close, last_five_minutes, past_date, get_date
-
-tz = pytz.timezone('America/Argentina/Buenos_Aires')
 
 def crear_remate(message):
     try:
