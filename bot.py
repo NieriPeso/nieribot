@@ -160,7 +160,7 @@ async def send_data(ctx):
     import requests
     
     headers = {
-        "x-api-key":'DAJEU@hK4JSHD8d19238sdhdshahd2198172@d9sad09ad128973'
+        "x-api-key": config('x-api-key')
     }
 
     body = {
