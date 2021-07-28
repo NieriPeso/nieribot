@@ -9,7 +9,7 @@ def edit_embed(data):
     embed.add_field(name='ID del remate:', value=f'{data["id"]}', inline=False)
     embed.add_field(name='Rematador:', value=f'<@{data["ownerId"]}>', inline=False)
     embed.add_field(name='Precio base:', value=f'{data["baseAmount"]}', inline=False)
-    embed.add_field(name='Fecha de finalización:', value=f'{data["closeAt"]}', inline=False)
+    embed.add_field(name='Fecha de finalización:', value=f'{data["closeAt"].strftime("%d/%m/%Y %H:%M")}', inline=False)
     embed.set_image(url=data["image"])
     text = ''
     if len(data['offers']) > 5:

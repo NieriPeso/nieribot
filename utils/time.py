@@ -30,14 +30,13 @@ def past_date(date):
         return True
     return False
 
-def last_five_minutes(offerTime, closeAt):
-    print('checking')
-    if timedelta(minutes=5) > closeAt - offerTime:
+def last_30_secconds(offerTime, closeAt):
+    if timedelta(seconds=30) > closeAt - offerTime:
         return True
     return False
 
 def get_new_close(offerTime, closeAt):
-    return closeAt + (timedelta(minutes=5) - (closeAt - offerTime))
+    return closeAt + (timedelta(minutes=1) - (closeAt - offerTime))
 
 def convert_to_datetime(date):
     date = datetime(
