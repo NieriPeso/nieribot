@@ -7,7 +7,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 
-from utils.time import convert_to_datetime, end, get_new_close, last_five_minutes, past_date, get_date
+from utils.time import convert_to_datetime, end, get_new_close, last_30_secconds, past_date, get_date
 
 def crear_remate(message):
     try:
@@ -216,7 +216,7 @@ def pujar_remate(message):
             embed.add_field(name='Pujaste a:', value=f'{temp["name"]}', inline=False)
             embed.add_field(name='Post de remate', value=f'[Remate en cartelera](https://discord.com/channels/847456853465497601/854807245509492808/{temp["messageId"]})', inline=False)
 
-            if last_five_minutes(puja['createdAt'], temp['closeAt']):
+            if last_30_secconds(puja['createdAt'], temp['closeAt']):
                 new_close = get_new_close(puja['createdAt'], temp['closeAt'])
                 temp['closeAt'] = new_close.strftime('%d/%m/%Y %H:%M')
                 embed.add_field(name='AVISO DE ULTIMOS 5 MINUTOS', value='Esta puja fué realizada dentro de los últimos 5 minutos.\nLo cual cambia la fecha de cierre agregando el tiempo\nnecesario para que continuen faltando 5 minutos', inline=False)
