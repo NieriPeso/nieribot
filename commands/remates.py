@@ -219,8 +219,8 @@ def pujar_remate(message):
             if last_30_secconds(puja['createdAt'], temp['closeAt']):
                 new_close = get_new_close(puja['createdAt'], temp['closeAt'])
                 temp['closeAt'] = new_close.strftime('%d/%m/%Y %H:%M')
-                embed.add_field(name='AVISO DE ULTIMOS 5 MINUTOS', value='Esta puja fué realizada dentro de los últimos 5 minutos.\nLo cual cambia la fecha de cierre agregando el tiempo\nnecesario para que continuen faltando 5 minutos', inline=False)
-                embed.add_field(name='NUEVO CIERRE', value=f'{temp["closeAt"]}')
+                embed.add_field(name='AVISO DE ULTIMOS 30 SEGUNDOS', value='Esta puja se realizó en los ultimos 30 segundos, este remate ahora cierra dentro de un minuto', inline=False)
+                embed.add_field(name='NUEVO CIERRE', value=f'{temp["closeAt"].strftime("%d/%m/%Y %H:%M")}')
                 db.alargar_remate(temp['id'], new_close)
 
             edit = edit_embed.edit_embed(data=temp)
