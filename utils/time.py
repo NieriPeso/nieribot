@@ -31,7 +31,7 @@ def past_date(date):
     return False
 
 def last_30_secconds(offerTime, closeAt):
-    if timedelta(seconds=30) > closeAt - offerTime:
+    if timedelta(seconds=30) >= closeAt - offerTime:
         return True
     return False
 
