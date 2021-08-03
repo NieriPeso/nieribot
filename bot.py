@@ -20,7 +20,7 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.message_id == 852333212373745674:
+    if payload.message_id == 871171938964353095:
         guild_id = payload.guild_id
         guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
 
