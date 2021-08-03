@@ -25,7 +25,7 @@ async def on_raw_reaction_add(payload):
         guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
 
         if payload.emoji.name == 'nieripeso':
-            role = discord.utils.get(guild.roles, name='nieri')
+            role = discord.utils.get(guild.roles, name='ñeri')
         else:
             role = None
 
