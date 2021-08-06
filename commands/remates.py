@@ -256,7 +256,7 @@ def pujar_remate(message):
         )
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
-            print("Error with the command flux of offer in a budget:/n/n",Err)
+        print("Error with the command flux of offer in a budget:/n/n",Err)
         return embed, True, None, None
 
 def cerrar_remate(ctx, id, motive):
