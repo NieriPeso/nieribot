@@ -65,19 +65,21 @@ def crear_remate(message):
 
             try:
                 img = message.attachments[0].url
-            except:
+            except Exception as Err:
                 embed = discord.Embed(
                     title='ERROR CON FOTO',
                     description='Es obligatorio al crear un remate subir una foto junto al mensaje',
                     colour=discord.Color.orange()
                 )
+                print("Error in attachment:/n/n",Err)
                 return embed, 1, None
 
             # CONVERTIR PRECIO A NUMERO ENTERO
             try:
                 base = int(base)
-            except ValueError:
+            except ValueError as Err:
                 base = 0
+                print("Error converting price to integer:/n/n",Err)
 
             # PERSISTENCIA EN MONGO DB
             save = est_remate_db.estructura(
@@ -116,12 +118,13 @@ def crear_remate(message):
             #         name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
             return embed, 0, confirm
 
-    except:
+    except Exception as Err:
         embed = discord.Embed(
             title='ERROR CREANDO REMATE',
             description=f'Lo siento <@{message.author.id}> pero tu remate no pudo registrarse, algo esta mal.\nComprueba como escribiste el comando y corrígelo o pidele ayuda a un mod.',
             colour=discord.Color.red()
         )
+        print("Error creating budget:/n/n",Err)
         return embed, 1, None
 
 def pujar_remate(message):
@@ -167,9 +170,10 @@ def pujar_remate(message):
             try:
                 embed.add_field(name='GANADOR/A:', value=f'<@{postores[-1][3]}> :hammer: :tada: <:nieripeso:852661603321249824>', inline=False)
                 embed.add_field(name='Cantidad pujada:', value=f'<:nieripeso:852661603321249824>{postores[-1][2]}', inline=False)
-            except:
+            except Exception as Err:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
                 embed.add_field(name='Nota:', value=f'Lo siento <@{temp["ownerId"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["name"]}**', inline=False)
+                print("Error with list of offers:/n/n",Err)
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
@@ -244,7 +248,7 @@ def pujar_remate(message):
                 )
                 return embed, True, None, None
 
-    except:
+    except Exception as Err:
         embed = discord.Embed(
             title='ERROR',
             description=f'{message.author.name} no se pudo realizar la puja',
@@ -252,6 +256,7 @@ def pujar_remate(message):
         )
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
+            print("Error with the command flux of offer in a budget:/n/n",Err)
         return embed, True, None, None
 
 def cerrar_remate(ctx, id, motive):
