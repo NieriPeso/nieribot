@@ -34,13 +34,19 @@ def crear_remate(message):
             remate_descripcion = datos[2][12:]
             try:
                 base = int(datos[3][5:].replace('\n',''))
-            except:
+            except Exception as Err:
                 embed = discord.Embed(
                     title='ERROR EN BASE',
                     description='Tiene que ser un numero entero sin letras',
                     colour=discord.Color.orange()
                 )
                 embed.add_field(name='Ejemplo de precio base en <:nieripeso:852661603321249824>:', value='1000')
+                print("""Error with the input number from user:
+Sending advertise to user that number needs to be an integer.
+.
+.
+[ ERROR ] -->""",Err)
+                raise
                 return embed, 1, None
 
             if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][16] == ' ' and datos[4][19] == ':':
@@ -71,7 +77,12 @@ def crear_remate(message):
                     description='Es obligatorio al crear un remate subir una foto junto al mensaje',
                     colour=discord.Color.orange()
                 )
-                print("Error in attachment:/n/n",Err)
+                print("""Error in attachment:
+Sending advertise on discord telling they need to upload picture.
+.
+.
+[ ERROR ] -->""",Err)
+                raise
                 return embed, 1, None
 
             # CONVERTIR PRECIO A NUMERO ENTERO
@@ -79,7 +90,12 @@ def crear_remate(message):
                 base = int(base)
             except ValueError as Err:
                 base = 0
-                print("Error converting price to integer:/n/n",Err)
+                print("""Error converting price to integer:
+Price will be 0.
+.
+.
+[ ERROR ] -->""",Err)
+                raise
 
             # PERSISTENCIA EN MONGO DB
             save = est_remate_db.estructura(
@@ -124,7 +140,11 @@ def crear_remate(message):
             description=f'Lo siento <@{message.author.id}> pero tu remate no pudo registrarse, algo esta mal.\nComprueba como escribiste el comando y corrígelo o pidele ayuda a un mod.',
             colour=discord.Color.red()
         )
-        print("Error creating budget:/n/n",Err)
+        print("""Error creating budget:
+.
+.
+[ ERROR ] -->""",Err)
+        raise
         return embed, 1, None
 
 def pujar_remate(message):
@@ -173,7 +193,12 @@ def pujar_remate(message):
             except Exception as Err:
                 embed.add_field(name='GANADOR/A:', value='Parece que **nadie** pujó en este remate', inline=False)
                 embed.add_field(name='Nota:', value=f'Lo siento <@{temp["ownerId"]}>,\nParece que nadie pujó a tu\nremate de: **{temp["name"]}**', inline=False)
-                print("Error with list of offers:/n/n",Err)
+                print("""Error with list of offers:
+Looks like no one offer in that budget.
+.
+.
+[ ERROR ] -->""",Err)
+            raise
             return embed, True, None, None
         elif datos[2][2:].isnumeric():
             cantidad = int(datos[2][2:].strip())
@@ -256,7 +281,14 @@ def pujar_remate(message):
         )
         embed.add_field(
             name='¿Que hacer?', value='Revisa el comando y el canal de ayuda o pide ayuda a un mod', inline=False)
-        print(Err)
+        print(f"""Ocurred an erron in the command to offer in a budget:
+From user {message.author.name}.
+Command introduced:
+{message.content}
+.
+.
+[ ERROR ] -->""",Err)
+        raise
         return embed, True, None, None
 
 def cerrar_remate(ctx, id, motive):
