@@ -9,10 +9,17 @@ from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
+import asyncio 
 from utils.fun import comparation
+import requests
+from sockets.socket import SocketManager
+
+
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
+
+
 
 @bot.event
 async def on_ready():
@@ -124,16 +131,15 @@ async def pujar_rem(ctx, *args):
 async def crear(ctx, *args):
     if validate_channel(ctx.channel.id, key='remate-valorate'):
         if args:
-            embed, error, confirm = remates.crear_remate(message=ctx.message)
-
+            embed, error, confirm, remate_structure = remates.crear_remate(message=ctx.message)
             if not embed and not error:
                 return
 
             if error == 0:
                 channel = bot.get_channel(get_channel_id('cartelera-remates'))
+                await SocketManager.module('Sales').create_sale(remate_structure)
                 await channel.send(embed=embed)
                 await ctx.message.channel.send(embed=confirm)
-
             elif error == 1:
                 await ctx.channel.send(embed=embed)
             
@@ -155,9 +161,7 @@ async def mark_user(ctx, user_id):
     pass
 
 @bot.command(name=ir_al_super)
-async def send_data(ctx):
-    import requests
-    
+async def send_data(ctx):    
     headers = {
         "x-api-key": config('X-API-KEY')
     }
@@ -169,7 +173,7 @@ async def send_data(ctx):
         'roles': [role.name.lower() for role in ctx.message.author.roles]
     }
 
-    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, data=body)
+    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, json=body)
     data = req.json()
     
     embed = discord.Embed(
@@ -217,6 +221,9 @@ async def busqueda(ctx, wallet):
             )
             embed.add_field(name='ID del user:', value=f'{msg.author.id}', inline=False)
             await channel.send(embed=embed)
-
-# EJECUCIÓN DEL BOT
-bot.run(config('TOKEN'))
+ 
+# * EJECUCIÓN DEL BOT y del socket client (generando multhread event loop) 
+loop = asyncio.get_event_loop()
+loop.create_task(SocketManager.run())
+loop.create_task(bot.run(config('TOKEN')))
+loop.run_forever()

@@ -15,7 +15,7 @@ cerrar_remate = 'cerrar-remate'
 blacklist = 'blacklist'
 cotizacion='cotizacion'
 channels = {
-    'remate-valorate':849410645513207828,
-    'cartelera-remates':854807245509492808,
-    'cartelera-cerrados':858860323850551337
+    'remate-valorate':829566898706317344,
+    'cartelera-remates':829566898706317344,
+    'cartelera-cerrados':858860323850551337,
 }

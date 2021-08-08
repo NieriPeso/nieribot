@@ -132,7 +132,7 @@ Price will be 0.
             # else:
             #     embed.add_field(
             #         name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-            return embed, 0, confirm
+            return embed, 0, confirm, save
 
     except Exception as Err:
         embed = discord.Embed(

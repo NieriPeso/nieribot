@@ -3,3 +3,4 @@ db_manager.py
 db_constants.py
 exportacion.py
 remates.csv
+venv
