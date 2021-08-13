@@ -36,6 +36,8 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_message(message):
+    if validate_channel(message.channel.id, key='cartelera-remates'):
+        print(f"Message id de cartelera remates: {message.id}")
     await bot.process_commands(message)
 
     # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
