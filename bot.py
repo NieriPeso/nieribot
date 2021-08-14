@@ -44,6 +44,7 @@ async def on_message(message):
     remates_on = obtener_remates_on()
     for remate in remates_on:
         if end(remate['closeAt']):
+            print(f"\nTrying to close budget with id: {remate['id']}\nMessage id: {remate['messageId']}\n\n")
             cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
             cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
             remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
