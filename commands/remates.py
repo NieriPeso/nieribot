@@ -107,7 +107,10 @@ Price will be 0.
                 base,
                 get_date(),
                 convert_to_datetime(final),
-                img
+                img,
+                True,
+                None, 
+                message.id
             )
 
             db.agregar_remate(save)
