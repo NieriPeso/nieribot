@@ -14,7 +14,7 @@ def crear_remate(message):
         remate = message.content.lower()
 
         if len(remate) < 15:
-            return None, None, None
+            return None, None, None, None
 
         datos = remate.split('*')
 
@@ -25,7 +25,7 @@ def crear_remate(message):
                 colour=discord.Color.orange()
             )
             embed.set_footer(text='EJEMPLO:')
-            return embed, 2, None
+            return embed, 2, None, None
 
         else:
             id_remate = db.cantidad_remates()
@@ -46,8 +46,7 @@ Sending advertise to user that number needs to be an integer.
 .
 .
 [ ERROR ] -->""",Err)
-                raise
-                return embed, 1, None
+                return embed, 1, None, None
 
             if len(datos[4]) > 6 and datos[4][8] == '/' and datos[4][11] == '/' and datos[4][16] == ' ' and datos[4][19] == ':':
                 final = str(datos[4][6:]).replace('\n', '')
@@ -58,7 +57,7 @@ Sending advertise to user that number needs to be an integer.
                         colour=discord.Color.orange()
                     )
                     embed.add_field(name='Fecha y hora en este momento:', value=get_date().strftime('%d/%m/%y %H:%M'))
-                    return embed, 1, None
+                    return embed, 1, None, None
 
             else:
                 embed = discord.Embed(
@@ -67,7 +66,7 @@ Sending advertise to user that number needs to be an integer.
                     colour=discord.Color.orange()
                 )
                 embed.add_field(name='Formato de ejemplo de fecha:', value='20/04/2022 16:20')
-                return embed, 1, None
+                return embed, 1, None, None
 
             try:
                 img = message.attachments[0].url
@@ -82,8 +81,7 @@ Sending advertise on discord telling they need to upload picture.
 .
 .
 [ ERROR ] -->""",Err)
-                raise
-                return embed, 1, None
+                return embed, 1, None, None
 
             # CONVERTIR PRECIO A NUMERO ENTERO
             try:
@@ -107,7 +105,10 @@ Price will be 0.
                 base,
                 get_date(),
                 convert_to_datetime(final),
-                img
+                img,
+                True,
+                None, 
+                message.id
             )
 
             db.agregar_remate(save)
@@ -132,7 +133,7 @@ Price will be 0.
             # else:
             #     embed.add_field(
             #         name='Imagen:', value='NO HAY IMAGEN DEL REMATE', inline=False)
-            return embed, 0, confirm
+            return embed, 0, confirm, save
 
     except Exception as Err:
         embed = discord.Embed(
@@ -144,8 +145,7 @@ Price will be 0.
 .
 .
 [ ERROR ] -->""",Err)
-        raise
-        return embed, 1, None
+        return embed, 1, None, None
 
 def pujar_remate(message):
     try:

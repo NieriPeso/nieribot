@@ -17,3 +17,4 @@ toml==0.10.2
 typing-extensions==3.10.0.0
 urllib3==1.26.6
 yarl==1.6.3
+python-socketio[asyncio_client]==5.4.0
