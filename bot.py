@@ -129,7 +129,9 @@ async def pujar_rem(ctx, *args):
 # COMANDO PARA CREAR UN REMATE
 @bot.command(name=crear_remate)
 async def crear(ctx, *args):
+    print('hola')
     if validate_channel(ctx.channel.id, key='remate-valorate'):
+        print('Channel validated and trying to create a budget')
         if args:
             embed, error, confirm, remate_structure = remates.crear_remate(message=ctx.message)
             if not embed and not error:
