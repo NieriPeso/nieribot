@@ -10,9 +10,16 @@ from utils.time import get_date_future, end
 from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
 from utils.fun import comparision
+import asyncio 
+import requests
+from sockets.socket import SocketManager
+
+
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
+
+
 
 @bot.event
 async def on_ready():
@@ -20,12 +27,12 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.message_id == 852333212373745674:
+    if payload.message_id == 871171938964353095:
         guild_id = payload.guild_id
         guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
 
-        if payload.emoji.name == 'acepto':
-            role = discord.utils.get(guild.roles, name='nieri')
+        if payload.emoji.name == 'nieripeso':
+            role = discord.utils.get(guild.roles, name='ñeri')
         else:
             role = None
 
@@ -36,13 +43,15 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_message(message):
+    if validate_channel(message.channel.id, key='cartelera-remates'):
+        print(f"Message id de cartelera remates: {message.id}")
     await bot.process_commands(message)
 
     # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
     remates_on = obtener_remates_on()
     for remate in remates_on:
         if end(remate['closeAt']):
-            print('Ended budget: ',remate)
+            print(f"\nTrying to close budget with id: {remate['id']}\nMessage id: {remate['messageId']}\n\n")
             cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
             cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
             remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
@@ -120,18 +129,19 @@ async def pujar_rem(ctx, *args):
 # COMANDO PARA CREAR UN REMATE
 @bot.command(name=crear_remate)
 async def crear(ctx, *args):
+    print('hola')
     if validate_channel(ctx.channel.id, key='remate-valorate'):
+        print('Channel validated and trying to create a budget')
         if args:
-            embed, error, confirm = remates.crear_remate(message=ctx.message)
-
+            embed, error, confirm, remate_structure = remates.crear_remate(message=ctx.message)
             if not embed and not error:
                 return
 
             if error == 0:
                 channel = bot.get_channel(get_channel_id('cartelera-remates'))
+                await SocketManager.module('Sales').create_sale(remate_structure)
                 await channel.send(embed=embed)
                 await ctx.message.channel.send(embed=confirm)
-
             elif error == 1:
                 await ctx.channel.send(embed=embed)
             
@@ -153,9 +163,7 @@ async def mark_user(ctx, user_id):
     pass
 
 @bot.command(name=ir_al_super)
-async def send_data(ctx):
-    import requests
-    
+async def send_data(ctx):    
     headers = {
         "x-api-key": config('X-API-KEY')
     }
@@ -167,7 +175,7 @@ async def send_data(ctx):
         'roles': [role.name.lower() for role in ctx.message.author.roles]
     }
 
-    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, data=body)
+    req = requests.post('https://mercado.nieri.uy/api/auth/signIn', headers=headers, json=body)
     data = req.json()
     
     embed = discord.Embed(
@@ -215,6 +223,9 @@ async def busqueda(ctx, wallet):
             )
             embed.add_field(name='ID del user:', value=f'{msg.author.id}', inline=False)
             await channel.send(embed=embed)
-
-# EJECUCIÓN DEL BOT
-bot.run(config('TOKEN'))
+ 
+# * EJECUCIÓN DEL BOT y del socket client (generando multhread event loop) 
+loop = asyncio.get_event_loop()
+loop.create_task(SocketManager.run())
+loop.create_task(bot.run(config('TOKEN')))
+loop.run_forever()
