@@ -1,4 +1,4 @@
-comparation = {
+comparision = {
     # currency_list 
     1 : [
         'USD $',

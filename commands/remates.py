@@ -217,6 +217,7 @@ def pujar_remate(message):
             embed.add_field(name='Post de remate', value=f'[Remate en cartelera](https://discord.com/channels/847456853465497601/854807245509492808/{temp["messageId"]})', inline=False)
 
             if last_30_secconds(puja['createdAt'], temp['closeAt']):
+                print(f'Last 30 seconds for the budget with id: {temp["id"]}')
                 new_close = get_new_close(puja['createdAt'], temp['closeAt'])
                 temp['closeAt'] = new_close.strftime('%d/%m/%Y %H:%M')
                 embed.add_field(name='AVISO DE ULTIMOS 30 SEGUNDOS', value='Esta puja se realizó en los ultimos 30 segundos, este remate ahora cierra dentro de un minuto', inline=False)

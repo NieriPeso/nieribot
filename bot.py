@@ -9,7 +9,7 @@ from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
-from utils.fun import comparation
+from utils.fun import comparision
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -42,6 +42,7 @@ async def on_message(message):
     remates_on = obtener_remates_on()
     for remate in remates_on:
         if end(remate['closeAt']):
+            print('Ended budget: ',remate)
             cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
             cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
             remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
@@ -188,11 +189,11 @@ async def cotizar_nieri(ctx):
         color=discord.Color.gold()
     )
     if comparationID == 3:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparation[comparationID][random.randrange(0, len(comparation[comparationID]))]}')
+        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
     elif comparationID == 2:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {price} {comparation[comparationID][random.randrange(0, len(comparation[comparationID]))]}')
+        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {price} {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
     else:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparation[comparationID][random.randrange(0, len(comparation[comparationID]))]} {price}')
+        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]} {price}')
     await ctx.channel.send(embed=embed)
 
 # COMANDO DE AYUDA PARA USAR EL BOT
