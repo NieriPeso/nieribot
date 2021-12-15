@@ -1,4 +1,4 @@
-import discord, random
+import discord, requests, json
 from discord.ext import commands
 from decouple import config
 from utils.constants import *
@@ -9,7 +9,6 @@ from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
-from utils.fun import comparision
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -181,19 +180,23 @@ async def send_data(ctx):
 # FUN COMMAND
 @bot.command(name=cotizacion)
 async def cotizar_nieri(ctx):
-    comparationID = random.randint(1, 3)
-    price = random.randint(1, 999)
+    headers = { 'Content-Type': 'application/json' }
+    response = requests.get('https://nieriapi.vercel.app/api/cotization', headers=headers)
+    data = json.loads(response.content.decode('utf-8'))
     embed = discord.Embed(
         tittle='COTIZACIÓN',
         description=f'Pedido por parte de: {ctx.message.author.name}',
         color=discord.Color.gold()
     )
-    if comparationID == 3:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
-    elif comparationID == 2:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {price} {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
-    else:
-        embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]} {price}')
+    embed.add_field(name=data['name'], value=data['value'])
+    # comparationID = random.randint(1, 3)
+    # price = random.randint(1, 999)
+    # if comparationID == 3:
+    #     embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
+    # elif comparationID == 2:
+    #     embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {price} {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]}')
+    # else:
+    #     embed.add_field(name='Respuesta:', value=f'El <:nieripeso:852661603321249824> cotiza -> {comparision[comparationID][random.randrange(0, len(comparision[comparationID]))]} {price}')
     await ctx.channel.send(embed=embed)
 
 # COMANDO DE AYUDA PARA USAR EL BOT
