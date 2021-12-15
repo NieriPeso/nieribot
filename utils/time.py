@@ -8,7 +8,6 @@ def get_date_to_close():
 
 def get_date():
     now = datetime.now()
-    now = datetime(day=now.day,month=now.month,year=now.year,hour=now.hour,minute=now.minute)
     return now
 
 def get_date_future():
