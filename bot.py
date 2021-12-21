@@ -183,7 +183,7 @@ async def send_data(ctx):
 @bot.command(name=cotizacion)
 async def cotizar_nieri(ctx):
     headers = { 'Content-Type': 'application/json' }
-    response = requests.get('https://nieriapi.vercel.app/api/cotization', headers=headers)
+    response = requests.get('https://nieri.uy/api/cotization', headers=headers)
     data = json.loads(response.content.decode('utf-8'))
     embed = discord.Embed(
         tittle='COTIZACIÓN',
