@@ -14,6 +14,8 @@ from sockets.socket import SocketManager
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
 
+NIERI_GUILD = 847456853465497601
+
 @bot.event
 async def on_ready():
     print(f'Nieribot listo y operando con el user: {bot.user}')
@@ -40,120 +42,24 @@ async def on_message(message):
         print(f"Message id de cartelera remates: {message.id}")
     await bot.process_commands(message)
 
-    # LÓGICA PARA VER SI LOS REMATES ACTIVOS HAN TERMINADO
-    remates_on = obtener_remates_on()
-    for remate in remates_on:
-        if end(remate['closeAt']):
-            print(f"\nTrying to close budget with id: {remate['id']}\nMessage id: {remate['messageId']}\n\n")
-            cartelera = bot.get_channel(get_channel_id('cartelera-remates'))
-            cartelera_cerrados = bot.get_channel(get_channel_id('cartelera-cerrados'))
-            remate_valorate = bot.get_channel(get_channel_id('remate-valorate'))
-            await cierre_cartelera.cierre(remate=remate, cartelera=cartelera, cartelera_cerrados=cartelera_cerrados, remate_valorate=remate_valorate)
-
     # LÓGICA PARA HACER QUE LOS MENSAJES DEL BOT NO SE ESCUCHEN
-    # A MENOS QUE SEA EN EL CANAL DE CARTELERA-REMATES PARA PODER
-    # GUARDAR EL ID EN DB Y PODER EDITAR/BORRAR EL MENSAJE
-    # CUANDO SE REQUIERA
     if message.author == bot.user:
-        if validate_channel(message.channel.id, key='cartelera-remates'):
-            guardar_id_mensaje(msg_id=message.id)
-        else:
-            return
-
-# COMANDO PARA REGISTRAR NUEVOSNIERIS Y SUS WALLETS PARA LA ENTREGA DE $Ñ
-@bot.command(name=nuevo_nieri)
-async def registro_nieri(ctx, wallet):
-    embed = nuevonieri.registro(wallet=wallet, name=ctx.message.author.name)
-    await ctx.send(embed=embed)
-
-# COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
-@bot.command(name=nieripeso)
-async def instrucciones_priv(ctx):
-    for msg in instrucciones:
-        await ctx.message.author.send(msg)
+        return
+    
+    if type(message.channel) is discord.DMChannel and message.content.startswith('ANUNCIO:'):
+        other_user = message.channel.recipient
+        if NIERI_GUILD not in [g.id for g in other_user.mutual_guilds]: return
+        nieri_guild = await bot.fetch_guild(NIERI_GUILD)
+        nieri_member = await nieri_guild.fetch_member(other_user.id)
+        if 'dev' in [r.name for r in nieri_member.roles]:
+            nieri_chat = await nieri_guild.fetch_channel(915753815033131100)
+            await nieri_chat.send('@everyone ' + message.content)
 
 # COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
 @bot.command(name=ñeripeso)
 async def instrucciones_priv(ctx):
     for msg in instrucciones:
         await ctx.message.author.send(msg)
-
-# BORRADO DE 50 MENSAJES EN UN CANAL, SE PUEDE PASAR UN NUMERO
-@bot.command(name=clear_chat)
-async def limpieza(ctx, arg=None):
-    await chat.limpiar_chat(ctx=ctx, arg=arg)
-
-# COMANDO PARA PUJAR EN LOS REMATES
-@bot.command(name=puja)
-async def puja_rem(ctx, *args):
-    if validate_channel(ctx.channel.id, key='remate-valorate'):
-        if args:
-            embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
-            if not error:
-                channel = bot.get_channel(get_channel_id('cartelera-remates'))
-                msg = await channel.fetch_message(id_msg)
-                await chat.editar_msg_remate(message=msg, embed=edit)
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(embed=embed)
-                if edit:
-                    await ctx.send('$puja\n*id 1\n*Ñ 1000')
-        else:
-            await ctx.send('$puja\n*id \n*Ñ ')
-
-# COMANDO PARA PUJAR EN LOS REMATES
-@bot.command(name=pujar)
-async def pujar_rem(ctx, *args):
-    if validate_channel(ctx.channel.id, key='remate-valorate'):
-        if args:
-            embed, error, edit, id_msg = remates.pujar_remate(message=ctx.message)
-            if not error:
-                channel = bot.get_channel(get_channel_id('cartelera-remates'))
-                msg = await channel.fetch_message(id_msg)
-                await chat.editar_msg_remate(message=msg, embed=edit)
-                await ctx.send(embed=embed)
-            else:
-                await ctx.send(embed=embed)
-                if edit:
-                    await ctx.send('$pujar\n*id 1\n*Ñ 1000')
-        else:
-            await ctx.send('$pujar\n*id \n*Ñ ')
-
-# COMANDO PARA CREAR UN REMATE
-@bot.command(name=crear_remate)
-async def crear(ctx, *args):
-    print('hola')
-    if validate_channel(ctx.channel.id, key='remate-valorate'):
-        print('Channel validated and trying to create a budget')
-        if args:
-            embed, error, confirm, remate_structure = remates.crear_remate(message=ctx.message)
-            if not embed and not error:
-                return
-
-            if error == 0:
-                channel = bot.get_channel(get_channel_id('cartelera-remates'))
-                await SocketManager.module('Sales').create_sale(remate_structure)
-                await channel.send(embed=embed)
-                await ctx.message.channel.send(embed=confirm)
-            elif error == 1:
-                await ctx.channel.send(embed=embed)
-            
-            elif error == 2:
-                await ctx.channel.send(embed=embed)
-                await ctx.send('$crear-remate\n*nombre ÑERIBOT\n*descripcion El bot de y para los ñeris\n*base 1000\n*final 20/04/2022 16:20')
-
-        else:
-            await ctx.send(f'$crear-remate\n*nombre \n*descripcion \nRetiro: \n*base \n*final {get_date_future()}')
-
-@bot.command(name=cerrar_remate)
-async def cierre(ctx, id, motive=None):
-    if validate_channel(ctx.channel.id, key='remate-valorate'):
-        embed = remates.cerrar_remate(ctx, id, motive)
-        await ctx.channel.send(embed=embed)
-
-@bot.command(name=blacklist)
-async def mark_user(ctx, user_id):
-    pass
 
 @bot.command(name=ir_al_super)
 async def send_data(ctx):    
