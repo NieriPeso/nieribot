@@ -9,7 +9,7 @@ from commands.help import *
 from utils.time import get_date_future, end
 from commands.validation import validate_channel
 from commands.get_channel_id import get_channel_id
-from sockets.socket import SocketManager
+#from sockets.socket import SocketManager
 
 # INICIO DEL BOT PARA SU FUNCIONAMIENTO
 bot = commands.Bot(command_prefix='$', help_command=None)
@@ -46,13 +46,14 @@ async def on_message(message):
     if message.author == bot.user:
         return
     print(type(message.channel), message.content)
-    if type(message.channel) is discord.DMChannel and message.content.startswith('ANUNCIO:'):
+    if type(message.channel) is discord.channel.DMChannel and message.content.startswith('ANUNCIO:'):
         other_user = message.channel.recipient
-        if NIERI_GUILD not in [g.id for g in other_user.mutual_guilds]: return
+        print(other_user, other_user.mutual_guilds)
         nieri_guild = await bot.fetch_guild(NIERI_GUILD)
         nieri_member = await nieri_guild.fetch_member(other_user.id)
+        print(nieri_guild, nieri_member, nieri_member.roles)
         if 'dev' in [r.name for r in nieri_member.roles]:
-            nieri_chat = await nieri_guild.fetch_channel(915753815033131100)
+            nieri_chat = await bot.fetch_channel(915753815033131100)
             await nieri_chat.send('@everyone ' + message.content)
 
 # COMANDO PARA ENVIAR INSTRUCCIONES DE COMO REGISTRARSE A UN NUEVI ÑERI
@@ -129,6 +130,6 @@ async def busqueda(ctx, wallet):
 
 # * EJECUCIÓN DEL BOT y del socket client (generando multhread event loop) 
 loop = asyncio.get_event_loop()
-loop.create_task(SocketManager.run())
+#loop.create_task(SocketManager.run())
 loop.create_task(bot.run(config('TOKEN')))
 loop.run_forever()
