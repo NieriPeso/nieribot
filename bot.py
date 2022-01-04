@@ -45,7 +45,7 @@ async def on_message(message):
     # LÓGICA PARA HACER QUE LOS MENSAJES DEL BOT NO SE ESCUCHEN
     if message.author == bot.user:
         return
-    
+    print(type(message.channel), message.content)
     if type(message.channel) is discord.DMChannel and message.content.startswith('ANUNCIO:'):
         other_user = message.channel.recipient
         if NIERI_GUILD not in [g.id for g in other_user.mutual_guilds]: return
